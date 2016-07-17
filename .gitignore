@@ -1,0 +1,10 @@
+*.egg-info
+.idea
+#.project
+#.pydevproject
+#.settings/
+*.pyc
+dist
+ldap3_orm/_version.py
+build
+version.txt
