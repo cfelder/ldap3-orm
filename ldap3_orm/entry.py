@@ -52,6 +52,67 @@ class EntryMeta(type):
 
 @add_metaclass(EntryMeta)
 class EntryBase(_Entry):
+    """Base class for creating object-relational mapping ldap entries.
+
+    *Configuring ORM models*
+
+    A mapping can be configured using class attributes of type
+    :py:class:`~ldap3.abstract.attrDef.AttrDef`, e.g.::
+
+        class User(EntryBase):
+            ...
+            username = AttrDef("uid")
+
+    The class attribute ``username`` describes the ldap Attribute ``uid``.
+    For each class attribute of type :py:class:`~ldap3.abstract.attrDef.AttrDef`
+    a corresponding *keyword argument* in the constructor will be generated
+    to initialize this attribute. Thus the ``User`` has one ldap Attribute
+    named ``uid`` which has to be set in the constructor e.g. using
+    ``username="guest"``. Ldap Attributes can be accessed either by sequence,
+    by assignment or as dictionary keys. Keys are not case sensitive.
+
+    Furthermore all class attributes of type
+    :py:class:`~ldap3.abstract.attrDef.AttrDef` will be destroyed after
+    creating the corresponding ldap Attribute in order to avoid naming
+    conflicts, e.g. when the class attribute has the same name as the ldap
+    Attribute definition in :py:class:`~ldap3.abstract.attrDef.AttrDef`.
+    Thus accessing ``User.username`` will raise
+    :py:exc:`~exceptions.AttributeError`.
+
+    For more information about ldap Attribute access, inherited methods, etc.
+    have a look at :py:class:`~ldap3.abstract.entry.Entry`.
+
+    *Attributes*
+
+    .. attribute:: dn
+
+    distinguished name, an unique identifier in your ldap tree
+
+    Each subclass of this class must define this attribute.
+
+    This attribute can be defined as a template using python's built-in
+    :py:func:`format` function. All class attributes and attributes configured
+    via :py:class:`~ldap3.abstract.attrDef.AttrDef` will be expanded.
+    Furthermore the generated DN will be normalized and escaped using
+    :py:func:`ldap3.utils.dn.safe_dn` function.
+
+
+    *Example*::
+
+        class User(EntryBase):
+            dn = "cn={uid},{base_dn}"
+            base_dn = "ou=People,dc=example,dc=com"
+            username = AttrDef("uid")
+
+        >>> User(username="guest")
+        DN: cn=guest,ou=People,dc=example,dc=com
+            uid: guest
+
+    The distinguished name ``DN`` in this example has been initialized with
+    the values of the configured ``uid`` ldap attribute and the class attribute
+    ``base_dn``.
+
+    """
 
     # distinguished name template for this class
     dn = None
