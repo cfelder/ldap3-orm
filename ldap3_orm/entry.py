@@ -51,7 +51,7 @@ class EntryMeta(type):
 
 
 @add_metaclass(EntryMeta)
-class Entry(_Entry):
+class EntryBase(_Entry):
 
     def __init__(self, **kwargs):
         if not hasattr(self, "dn"):

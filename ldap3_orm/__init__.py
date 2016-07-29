@@ -2,7 +2,7 @@
 
 from ldap3 import AttrDef
 
-from ldap3_orm.entry import Entry
+from ldap3_orm.entry import EntryBase
 # pylint: disable=unused-import
 from ldap3_orm._version import __version__, __revision__
 
