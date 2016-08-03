@@ -146,7 +146,8 @@ class EntryBase(_Entry):
         # self._attributes will be overwritten by _Entry.__init__
         # thus store a copy self._attributes
         attributes = dict(self._attributes)
-        fmtdict = dict(self.__class__.__dict__)
+        fmtdict = dict((k, getattr(self.__class__, k))
+                       for k in dir(self.__class__))
         fmtdict.update(attributes)
         _Entry.__init__(self, safe_dn(self.dn.format(**fmtdict)), None)
         # restore self._attributes
