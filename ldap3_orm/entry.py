@@ -37,17 +37,23 @@ class EntryMeta(type):
         if not hasattr(cls, "_attrdefs"):
             cls._attrdefs = {}
         # for class inheritance first merge and/or update
-        # all _attrdefs in correct order
+        # all _attrdefs and object_classes in correct order
         newattrdefs = {}
+        newobjclss = set()
         for base in reversed(bases):
-           if hasattr(base, "_attrdefs"):
-               newattrdefs.update(base._attrdefs)
+            if hasattr(base, "_attrdefs"):
+                newattrdefs.update(base._attrdefs)
+            if hasattr(base, "object_classes"):
+                newobjclss.update(set(base.object_classes))
         # merge and/or update _attrdefs for current class
         for k, attr in attrs.iteritems():
             if isinstance(attr, AttrDef):
                 newattrdefs[k] = attr
                 delattr(cls, k)
         cls._attrdefs = newattrdefs
+        # update object_classes for current class
+        newobjclss.update(set(cls.object_classes))
+        cls.object_classes = newobjclss
 
 
 @add_metaclass(EntryMeta)
@@ -86,16 +92,21 @@ class EntryBase(_Entry):
 
     .. attribute:: dn
 
-    distinguished name, an unique identifier in your ldap tree
+       distinguished name, an unique identifier in your ldap tree
 
-    Each subclass of this class must define this attribute.
+       Each subclass of this class must define this attribute.
 
-    This attribute can be defined as a template using python's built-in
-    :py:func:`format` function. All class attributes and attributes configured
-    via :py:class:`~ldap3.abstract.attrDef.AttrDef` will be expanded.
-    Furthermore the generated DN will be normalized and escaped using
-    :py:func:`ldap3.utils.dn.safe_dn` function.
+       This attribute can be defined as a template using python's built-in
+       :py:func:`format` function. All class attributes and attributes
+       configured via :py:class:`~ldap3.abstract.attrDef.AttrDef` will be
+       expanded. Furthermore the generated DN will be normalized and escaped
+       using :py:func:`ldap3.utils.dn.safe_dn` function.
 
+
+    .. attribute:: object_classes
+
+       a set of object classes to which an entry of this class belongs,
+       necessary for creating an new entry in the ldap tree.
 
     *Example*::
 
@@ -116,6 +127,9 @@ class EntryBase(_Entry):
 
     # distinguished name template for this class
     dn = None
+
+    # set of ldap object classes for this entry
+    object_classes = set()
 
     def __init__(self, **kwargs):
         if self.dn is None:
