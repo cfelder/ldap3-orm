@@ -53,10 +53,13 @@ class EntryMeta(type):
 @add_metaclass(EntryMeta)
 class EntryBase(_Entry):
 
+    # distinguished name template for this class
+    dn = None
+
     def __init__(self, **kwargs):
-        if not hasattr(self, "dn"):
-            raise TypeError("Class '%s' does not provide the 'dn' attribute"
-                            % self.__class__.__name__)
+        if self.dn is None:
+            raise NotImplementedError("%s must set the 'dn' attribute"
+                                      % self.__class__)
         self.__dict__["_attributes"] = {}
         # initialize attributes from kwargs
         attrdefs = dict(self._attrdefs)
