@@ -6,11 +6,25 @@
 Welcome to ldap3-orm's documentation!
 =====================================
 
-Contents:
+| ldap3-orm is an object-relational mapper for LDAP data based on the
+  `ldap3 project <http://ldap3.readthedocs.io>`_
+| Version: |version|
+
+License
+-------
+
+The ldap3-orm library is open source software released under the
+**LGPL-3.0+ license** (http://www.gnu.org/licenses/lgpl-3.0.html).
+
+.. include:: examples/user.rst
+
+Further reading
+---------------
 
 .. toctree::
    :maxdepth: 2
 
+   install
    classes/entry
 
 Indices and tables
