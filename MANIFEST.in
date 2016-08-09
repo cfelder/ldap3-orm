@@ -1,0 +1,10 @@
+include COPYING
+include version.txt
+include vcversioner.py
+include requirements*.txt
+graft doc
+graft ldap3_orm
+graft test
+prune doc/_build
+global-exclude *.py[cod] __pycache__ *.so *.db
+
