@@ -63,8 +63,28 @@ setup(cmdclass={"test": test},
       description="ldap3-orm, object-relational mapping for ldap3",
       author="Christian Felder",
       author_email="webmaster@bsm-felder.de.de",
+      url = "http://code.bsm-felder.de/doc/ldap3-orm",
       license="LGPL-3.0+",
       packages=find_packages(exclude=["test"]),
       include_package_data=True,
       requires=["ldap3", "six"],
+      classifiers = [
+          "Development Status :: 3 - Alpha",
+          "Intended Audience :: Developers",
+          "Intended Audience :: System Administrators",
+          "License :: OSI Approved :: GNU General Public License v3 or later "
+          "(GPLv3+)",
+          "Natural Language :: English",
+          "Operating System :: OS Independent",
+          "Programming Language :: Python",
+          "Programming Language :: Python :: 2",
+          "Programming Language :: Python :: 3",
+          "Topic :: Software Development",
+          "Topic :: Software Development :: Libraries",
+          "Topic :: System :: Systems Administration",
+          "Topic :: System :: Systems Administration :: "
+          "Authentication/Directory",
+          "Topic :: System :: Systems Administration :: "
+          "Authentication/Directory :: LDAP",
+      ],
      )
