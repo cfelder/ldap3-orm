@@ -66,5 +66,5 @@ setup(cmdclass={"test": test},
       license="LGPL-3.0+",
       packages=find_packages(exclude=["test"]),
       include_package_data=True,
-      requires=["ldap3"],
+      requires=["ldap3", "six"],
      )
