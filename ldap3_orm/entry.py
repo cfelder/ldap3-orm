@@ -88,6 +88,12 @@ class EntryBase(_Entry):
     For more information about ldap Attribute access, inherited methods, etc.
     have a look at :py:class:`~ldap3.abstract.entry.Entry`.
 
+    Validation of ldap Attributes can be configured by passing
+    validate = *callable* to :py:class:`~ldap3.abstract.attrDef.AttrDef`
+    where *callable* must accept two arguments, the attribute key and the
+    value which should be assigned to the attribute. The *callable* must
+    return a boolean allowing or denying the validation or raise an exception.
+
     *Attributes*
 
     .. attribute:: dn
@@ -110,10 +116,13 @@ class EntryBase(_Entry):
 
     *Example*::
 
+        validateuser = lambda _, value: value.isalpha()
+
+
         class User(EntryBase):
             dn = "cn={uid},{base_dn}"
             base_dn = "ou=People,dc=example,dc=com"
-            username = AttrDef("uid")
+            username = AttrDef("uid", validate=validateuser)
 
         >>> User(username="guest")
         DN: cn=guest,ou=People,dc=example,dc=com
@@ -122,6 +131,14 @@ class EntryBase(_Entry):
     The distinguished name ``DN`` in this example has been initialized with
     the values of the configured ``uid`` ldap attribute and the class attribute
     ``base_dn``.
+
+    The ``username`` has been validated using ``validateuser`` which accepts
+    only alphabetic characters. Thus the following code will raise
+    :py:exc:`~exceptions.TypeError`. ::
+
+        >>> User(username="guest42")
+        TypeError: Validation failed for attribute 'uid'
+                   and value 'guest42'
 
     """
 
@@ -171,6 +188,13 @@ class EntryBase(_Entry):
         tolist = lambda itm: itm if isinstance(itm, SEQUENCE_TYPES) \
                                  else [itm]
         attribute = Attribute(attrdef, self)
-        # TODO: check for validator and validate
         attribute.__dict__["values"] = tolist(value)
+        # check for validator
+        if attrdef.validate:
+            # call validator with attribute key and the corresponding value
+            # which should be assigned to the attribute.
+            if not attrdef.validate(attribute.key, attribute.value):
+                raise TypeError("Validation failed for attribute '%s' "
+                                "and value '%s'" % (attribute.key,
+                                                    attribute.value))
         self.__dict__["_attributes"][attribute.key] = attribute
