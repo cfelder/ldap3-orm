@@ -58,7 +58,7 @@ File                          Required for
 Install ldap3-orm from sources
 ------------------------------
 
-If all requirements has been fullfilled you can install ldap3-orm using the
+If all requirements have been fullfilled you can install ldap3-orm using the
 standard distutils/setuptools mechanism. Just run the following command in
 the project's root folder. ::
 

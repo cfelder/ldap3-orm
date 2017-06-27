@@ -69,26 +69,26 @@ class EntryBase(_Entry):
             ...
             username = AttrDef("uid")
 
-    The class attribute ``username`` describes the ldap Attribute ``uid``.
+    The class attribute ``username`` describes the ldap attribute ``uid``.
     For each class attribute of type :py:class:`~ldap3.abstract.attrDef.AttrDef`
     a corresponding *keyword argument* in the constructor will be generated
-    to initialize this attribute. Thus the ``User`` has one ldap Attribute
+    to initialize this attribute. Thus the ``User`` has one ldap attribute
     named ``uid`` which has to be set in the constructor e.g. using
-    ``username="guest"``. Ldap Attributes can be accessed either by sequence,
+    ``username="guest"``. Ldap attributes can be accessed either by sequence,
     by assignment or as dictionary keys. Keys are not case sensitive.
 
     Furthermore all class attributes of type
     :py:class:`~ldap3.abstract.attrDef.AttrDef` will be destroyed after
-    creating the corresponding ldap Attribute in order to avoid naming
+    creating the corresponding ldap attribute in order to avoid naming
     conflicts, e.g. when the class attribute has the same name as the ldap
-    Attribute definition in :py:class:`~ldap3.abstract.attrDef.AttrDef`.
+    attribute definition in :py:class:`~ldap3.abstract.attrDef.AttrDef`.
     Thus accessing ``User.username`` will raise
     :py:exc:`~exceptions.AttributeError`.
 
-    For more information about ldap Attribute access, inherited methods, etc.
+    For more information about ldap attribute access, inherited methods, etc.
     have a look at :py:class:`~ldap3.abstract.entry.Entry`.
 
-    Validation of ldap Attributes can be configured by passing
+    Validation of ldap attributes can be configured by passing
     validate = *callable* to :py:class:`~ldap3.abstract.attrDef.AttrDef`
     where *callable* must accept two arguments, the attribute key and the
     value which should be assigned to the attribute. The *callable* must
@@ -106,7 +106,7 @@ class EntryBase(_Entry):
        :py:func:`format` function. All class attributes and attributes
        configured via :py:class:`~ldap3.abstract.attrDef.AttrDef` will be
        expanded. Furthermore the generated DN will be normalized and escaped
-       using :py:func:`ldap3.utils.dn.safe_dn` function.
+       using the :py:func:`ldap3.utils.dn.safe_dn` function.
 
 
     .. attribute:: object_classes
