@@ -3,6 +3,8 @@
 from ldap3 import Attribute, AttrDef
 from ldap3 import SEQUENCE_TYPES
 from ldap3 import Entry as _Entry
+from ldap3.abstract import STATUS_WRITABLE as _STATUS_WRITEABLE
+from ldap3.abstract.entry import EntryState as _EntryState
 from ldap3.utils.dn import safe_dn
 from six import add_metaclass
 # pylint: disable=unused-import
@@ -149,10 +151,14 @@ class EntryBase(_Entry):
     object_classes = set()
 
     def __init__(self, **kwargs):
+        class _DummyCursor(object):  # needed for _EntryState
+            definition = None
+
         if self.dn is None:
             raise NotImplementedError("%s must set the 'dn' attribute"
                                       % self.__class__)
-        self.__dict__["_attributes"] = {}
+        cursor = _DummyCursor()
+        self.__dict__["_state"] = _EntryState(None, cursor)
         # initialize attributes from kwargs
         attrdefs = dict(self._attrdefs)
         for k, v in kwargs.iteritems():
@@ -174,20 +180,25 @@ class EntryBase(_Entry):
              raise TypeError("__init__() missing the following keyword "
                              "argument" + s + ", ".join(attrdefs.keys()) + "'")
 
-        # self._attributes will be overwritten by _Entry.__init__
-        # thus store a copy self._attributes
-        attributes = dict(self._attributes)
+        # self._state will be overwritten by _Entry.__init__
+        # thus store a copy self._state
+        state = self._state
         fmtdict = dict((k, getattr(self.__class__, k))
                        for k in dir(self.__class__))
-        fmtdict.update(attributes)
-        _Entry.__init__(self, safe_dn(self.dn.format(**fmtdict)), None)
-        # restore self._attributes
-        self.__dict__["_attributes"] = attributes
+        fmtdict.update(self._state.attributes)
+
+        safedn = safe_dn(self.dn.format(**fmtdict))
+        _Entry.__init__(self, safedn, cursor)
+        state.dn = safedn
+        state.set_status(_STATUS_WRITEABLE)
+
+        # restore self._state
+        self.__dict__["_state"] = state
 
     def _create_attribute(self, attrdef, value):
         tolist = lambda itm: itm if isinstance(itm, SEQUENCE_TYPES) \
                                  else [itm]
-        attribute = Attribute(attrdef, self)
+        attribute = Attribute(attrdef, self, None)
         attribute.__dict__["values"] = tolist(value)
         # check for validator
         if attrdef.validate:
@@ -197,4 +208,4 @@ class EntryBase(_Entry):
                 raise TypeError("Validation failed for attribute '%s' "
                                 "and value '%s'" % (attribute.key,
                                                     attribute.value))
-        self.__dict__["_attributes"][attribute.key] = attribute
+        self._state.attributes[attribute.key] = attribute

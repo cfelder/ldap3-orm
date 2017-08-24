@@ -7,7 +7,7 @@ The following code creates a simple ORM model for a LDAP user entry::
 
 
    class User(EntryBase):
-       dn = "cn={uid},{base_dn}"
+       dn = "uid={uid},{base_dn}"
        base_dn = "ou=People,dc=example,dc=com"
        object_classes = ["top", "inetUser", "inetOrgPerson"]
 
@@ -28,7 +28,7 @@ attribute of type :py:class:`~ldap3.abstract.attrDef.AttrDef`::
                 surname="User",
                 email="guest.user@example.com")
    >>> u
-   DN: cn=guest,ou=People,dc=example,dc=com
+   DN: uid=guest,ou=People,dc=example,dc=com
        cn: Guest User
        givenName: Guest
        mail: guest.user@example.com
@@ -43,5 +43,5 @@ in order to create a new LDAP user entry::
    >>> from ldap3 import Connection
    >>> with Connection("ldap://ldap.example.com", "cn=directory manager",
                        "secret", auto_bind=True) as conn:
-           conn.add(u.entry_get_dn(), u.object_classes,
-                    u.entry_get_attributes_dict())
+           conn.add(u.entry_dn, u.object_classes,
+                    u.entry_get_attributes_dict)
