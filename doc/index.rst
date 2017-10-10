@@ -6,9 +6,10 @@
 Welcome to ldap3-orm's documentation!
 =====================================
 
+:Version: |version|
+
 | ldap3-orm is an object-relational mapper for LDAP data based on the
   `ldap3 project <http://ldap3.readthedocs.io>`_
-| Version: |version|
 
 License
 -------
