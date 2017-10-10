@@ -6,7 +6,7 @@ from ldap3 import Entry as _Entry
 from ldap3.abstract import STATUS_WRITABLE as _STATUS_WRITEABLE
 from ldap3.abstract.entry import EntryState as _EntryState
 from ldap3.utils.dn import safe_dn
-from six import add_metaclass
+from six import add_metaclass, iteritems
 # pylint: disable=unused-import
 from ldap3_orm._version import __version__, __revision__
 
@@ -48,7 +48,7 @@ class EntryMeta(type):
             if hasattr(base, "object_classes"):
                 newobjclss.update(set(base.object_classes))
         # merge and/or update _attrdefs for current class
-        for k, attr in attrs.iteritems():
+        for k, attr in iteritems(attrs):
             if isinstance(attr, AttrDef):
                 newattrdefs[k] = attr
                 delattr(cls, k)
@@ -161,7 +161,7 @@ class EntryBase(_Entry):
         self.__dict__["_state"] = _EntryState(None, cursor)
         # initialize attributes from kwargs
         attrdefs = dict(self._attrdefs)
-        for k, v in kwargs.iteritems():
+        for k, v in iteritems(kwargs):
             if k in self._attrdefs:
                 attrdef = attrdefs.pop(k)
                 self._create_attribute(attrdef, v)
