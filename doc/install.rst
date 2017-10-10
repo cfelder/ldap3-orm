@@ -63,3 +63,4 @@ standard distutils/setuptools mechanism. Just run the following command in
 the project's root folder. ::
 
   $ python setup.py install
+

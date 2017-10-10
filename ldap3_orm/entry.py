@@ -8,11 +8,13 @@ from ldap3.abstract.entry import EntryState as _EntryState
 from ldap3.utils.dn import safe_dn
 from six import add_metaclass, iteritems
 # pylint: disable=unused-import
+# pylint: disable=protected-access
+# noinspection PyProtectedMember
 from ldap3_orm._version import __version__, __revision__
 
 
 __author__ = "Christian Felder <webmaster@bsm-felder.de>"
-__copyright__ = """Copyright 2016, Christian Felder
+__copyright__ = """Copyright 2016-2017, Christian Felder
 
 This file is part of ldap3-orm, object-relational mapping for ldap3.
 
@@ -44,6 +46,8 @@ class EntryMeta(type):
         newobjclss = set()
         for base in reversed(bases):
             if hasattr(base, "_attrdefs"):
+                # pylint: disable=protected-access
+                # noinspection PyProtectedMember
                 newattrdefs.update(base._attrdefs)
             if hasattr(base, "object_classes"):
                 newobjclss.update(set(base.object_classes))
@@ -176,9 +180,9 @@ class EntryBase(_Entry):
         # all remaining attributes have no reasonable default value
         # (NotImplemented) and should have been set earlier
         if attrdefs:
-             s = " '" if len(attrdefs) == 1 else "s '"
-             raise TypeError("__init__() missing the following keyword "
-                             "argument" + s + ", ".join(attrdefs.keys()) + "'")
+            s = " '" if len(attrdefs) == 1 else "s '"
+            raise TypeError("__init__() missing the following keyword "
+                            "argument" + s + ", ".join(attrdefs.keys()) + "'")
 
         # self._state will be overwritten by _Entry.__init__
         # thus store a copy self._state
@@ -196,8 +200,9 @@ class EntryBase(_Entry):
         self.__dict__["_state"] = state
 
     def _create_attribute(self, attrdef, value):
-        tolist = lambda itm: itm if isinstance(itm, SEQUENCE_TYPES) \
-                                 else [itm]
+        def tolist(itm):
+            return itm if isinstance(itm, SEQUENCE_TYPES) else [itm]
+
         attribute = Attribute(attrdef, self, None)
         attribute.__dict__["values"] = tolist(value)
         # check for validator

@@ -3,18 +3,16 @@
 
 from __future__ import print_function
 
-import os
 import os.path
 from distutils.core import Command
 from setuptools import find_packages, setup
 import vcversioner
 
-
 __author__ = "Christian Felder <webmaster@bsm-felder.de>"
 __version__ = vcversioner.find_version(
-                   version_module_paths=[os.path.join("ldap3_orm",
-                                                      "_version.py")]).version
-__copyright__ = """Copyright 2016, Christian Felder
+    version_module_paths=[os.path.join("ldap3_orm",
+                                       "_version.py")]).version
+__copyright__ = """Copyright 2016-2017, Christian Felder
 
 This file is part of ldap3-orm, object-relational mapping for ldap3.
 
@@ -35,7 +33,6 @@ along with ldap3-orm. If not, see <http://www.gnu.org/licenses/>.
 
 
 class test(Command):
-
     description = "run nosetest test suite"
 
     # List of option tuples: long name, short name (None if no short
@@ -63,12 +60,12 @@ setup(cmdclass={"test": test},
       description="ldap3-orm, object-relational mapping for ldap3",
       author="Christian Felder",
       author_email="webmaster@bsm-felder.de.de",
-      url = "http://code.bsm-felder.de/doc/ldap3-orm",
+      url="http://code.bsm-felder.de/doc/ldap3-orm",
       license="LGPL-3.0+",
       packages=find_packages(exclude=["test"]),
       include_package_data=True,
       requires=["ldap3", "six"],
-      classifiers = [
+      classifiers=[
           "Development Status :: 3 - Alpha",
           "Intended Audience :: Developers",
           "Intended Audience :: System Administrators",

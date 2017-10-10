@@ -20,6 +20,8 @@ import os
 import sys
 sys.path.insert(0, os.path.abspath('..'))
 
+# pylint: disable=protected-access
+# noinspection PyProtectedMember
 from ldap3_orm._version import __version__, __revision__
 
 # -- General configuration ------------------------------------------------

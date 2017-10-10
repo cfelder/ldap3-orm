@@ -1,14 +1,16 @@
 # coding: utf-8
-
+# pylint: disable=unused-import
 from ldap3 import AttrDef
 
 from ldap3_orm.entry import EntryBase
+# pylint: disable=protected-access
 # pylint: disable=unused-import
+# noinspection PyProtectedMember
 from ldap3_orm._version import __version__, __revision__
 
 
 __author__ = "Christian Felder <webmaster@bsm-felder.de>"
-__copyright__ = """Copyright 2016, Christian Felder
+__copyright__ = """Copyright 2016-2017, Christian Felder
 
 This file is part of ldap3-orm, object-relational mapping for ldap3.
 

@@ -45,3 +45,4 @@ in order to create a new LDAP user entry::
                        "secret", auto_bind=True) as conn:
            conn.add(u.entry_dn, u.object_classes,
                     u.entry_get_attributes_dict)
+
