@@ -57,7 +57,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'ldap3-orm'
-copyright = u'2016, Christian Felder'
+copyright = u'2016-2017, Christian Felder'
 author = u'Christian Felder'
 
 # The version info for the project you're documenting, acts as replacement for
