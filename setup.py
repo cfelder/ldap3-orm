@@ -12,7 +12,7 @@ __author__ = "Christian Felder <webmaster@bsm-felder.de>"
 __version__ = vcversioner.find_version(
     version_module_paths=[os.path.join("ldap3_orm",
                                        "_version.py")]).version
-__copyright__ = """Copyright 2016-2017, Christian Felder
+__copyright__ = """Copyright 2016-2018, Christian Felder
 
 This file is part of ldap3-orm, object-relational mapping for ldap3.
 
