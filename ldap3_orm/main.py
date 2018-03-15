@@ -58,7 +58,7 @@ def load_config(configfile):
     return _exec(configfile)
 
 
-def parse_args(argv):
+def _create_parsers():
     parent = argparse.ArgumentParser(add_help=False)
     parent.add_argument("-c", "--config", type=argparse.FileType('r'),
                         help="configuration file with command line arguments")
@@ -94,6 +94,15 @@ def parse_args(argv):
                         help="ldap base dn")
     parser.add_argument("-m", "--modules", nargs='*',
                         help="python modules to include into current namespace")
+    return parent, parser
+
+
+def create_parser():
+    return _create_parsers()[1]
+
+
+def parse_args(argv):
+    parent, parser = _create_parsers()
     # run parent parser to gather cliargs from the configuration file
     ns = parent.parse_known_args(argv[1:])[0]
     configdir = path.join(getenv("APPDATA",
