@@ -5,8 +5,10 @@ from ldap3 import SEQUENCE_TYPES
 from ldap3 import Entry as _Entry
 from ldap3.abstract import STATUS_WRITABLE as _STATUS_WRITEABLE
 from ldap3.abstract.entry import EntryState as _EntryState
+from ldap3.utils.ciDict import CaseInsensitiveWithAliasDict
 from ldap3.utils.dn import safe_dn
 from six import add_metaclass, iteritems
+from ldap3_orm.parameter import Parameter, ParamDef
 # pylint: disable=unused-import
 # pylint: disable=protected-access
 # noinspection PyProtectedMember
@@ -32,6 +34,13 @@ You should have received a copy of the GNU Lesser General Public License
 along with ldap3-orm. If not, see <http://www.gnu.org/licenses/>.
 
 """
+
+
+class EntryState(_EntryState):
+
+    def __init__(self, *args, **kwargs):
+        _EntryState.__init__(self, *args, **kwargs)
+        self.parameters = CaseInsensitiveWithAliasDict()
 
 
 class EntryMeta(type):
@@ -146,6 +155,28 @@ class EntryBase(_Entry):
         TypeError: Validation failed for attribute 'uid'
                    and value 'guest42'
 
+    In order to support *keyword arguments* used as a template for the DN
+    it is possible to define parameter definitions using
+    :py:class:`~ldap3_orm.ParamDef` in the same way as
+    :py:class:`~ldap3.abstract.attrDef.AttrDef`, except that they are not added
+    as ldap attributes.
+
+    *Example*::
+
+        class Automount(EntryBase):
+            dn = "cn={cn},ou={automap},{base_dn}"
+            base_dn = "cn=automount,dc=example,dc=com"
+            object_classes = ["top", "automount"]
+            autofile = ParamDef("automap", default="auto.master")
+            key = AttrDef("cn")
+            info = AttrDef("automountInformation")
+
+         >>> Automount(key="/Scratch", info="examplenfs.example.com:/Scratch",
+                       autofile="auto_nfs")
+         DN: cn=/Scratch,ou=auto_nfs,cn=automount,dc=example,dc=com
+             automountInformation: examplenfs.example.com:/Scratch
+             cn: /Scratch
+
     """
 
     # distinguished name template for this class
@@ -162,13 +193,13 @@ class EntryBase(_Entry):
             raise NotImplementedError("%s must set the 'dn' attribute"
                                       % self.__class__)
         cursor = _DummyCursor()
-        self.__dict__["_state"] = _EntryState(None, cursor)
+        self.__dict__["_state"] = EntryState(None, cursor)
         # initialize attributes from kwargs
         attrdefs = dict(self._attrdefs)
         for k, v in iteritems(kwargs):
             if k in self._attrdefs:
                 attrdef = attrdefs.pop(k)
-                self._create_attribute(attrdef, v)
+                self._create_attribute_or_parameter(attrdef, v)
             else:
                 raise TypeError("__init__() got an unexpected keyword argument"
                                 " '%s'" % k)
@@ -176,7 +207,7 @@ class EntryBase(_Entry):
         for key in attrdefs.keys():
             if attrdefs[key].default != NotImplemented:
                 attrdef = attrdefs.pop(key)
-                self._create_attribute(attrdef, attrdef.default)
+                self._create_attribute_or_parameter(attrdef, attrdef.default)
         # all remaining attributes have no reasonable default value
         # (NotImplemented) and should have been set earlier
         if attrdefs:
@@ -190,6 +221,7 @@ class EntryBase(_Entry):
         fmtdict = dict((k, getattr(self.__class__, k))
                        for k in dir(self.__class__))
         fmtdict.update(self._state.attributes)
+        fmtdict.update(self._state.parameters)
 
         safedn = safe_dn(self.dn.format(**fmtdict))
         _Entry.__init__(self, safedn, cursor)
@@ -199,11 +231,11 @@ class EntryBase(_Entry):
         # restore self._state
         self.__dict__["_state"] = state
 
-    def _create_attribute(self, attrdef, value):
+    def _create(self, attrdef, value, cls, state_parameters_or_attributes):
         def tolist(itm):
             return itm if isinstance(itm, SEQUENCE_TYPES) else [itm]
 
-        attribute = Attribute(attrdef, self, None)
+        attribute = cls(attrdef, self, None)
         attribute.__dict__["values"] = tolist(value)
         # check for validator
         if attrdef.validate:
@@ -213,4 +245,18 @@ class EntryBase(_Entry):
                 raise TypeError("Validation failed for attribute '%s' "
                                 "and value '%s'" % (attribute.key,
                                                     attribute.value))
-        self._state.attributes[attribute.key] = attribute
+        state_parameters_or_attributes[attribute.key] = attribute
+
+    def _create_attribute(self, attrdef, value):
+        # add Attributes to the schema definition self._state.attributes
+        self._create(attrdef, value, Attribute, self._state.attributes)
+
+    def _create_parameter(self, attrdef, value):
+        # do not add Parameters to the schema
+        self._create(attrdef, value, Parameter, self._state.parameters)
+
+    def _create_attribute_or_parameter(self, attrdef, value):
+        if isinstance(attrdef, ParamDef):
+            self._create_parameter(attrdef, value)
+        else:  # AttrDef
+            self._create_attribute(attrdef, value)
