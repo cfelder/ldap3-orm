@@ -188,3 +188,77 @@ names available in the current scope use the :py:func:`dir()` function.
     'url',
     'username']
 
+Extending ldap3-ipython
+=======================
+
+In addition to ORM models provided in python modules passed to `ldap3-ipython`
+new functions using the active
+:py:class:`ldap3.Connection <ldap3.core.connection.Connection>` can be
+implemented using the :py:func:`ldap3_orm.connection.connection` decorator.
+
+.. py:decorator:: ldap3_orm.connection.connection
+.. autofunction:: ldap3_orm.connection.connection
+
+Assuming we want to search for the next free ``uidNumber`` for a
+``posixAccount`` in a given range we can use the following code:
+
+.. code-block:: python
+   :caption: userid.py
+
+   from ldap3_orm.connection import connection, base_dn, conn
+
+
+   uid_range = range(20000, 25000 + 1)  # min, max uid
+
+
+   @connection(conn, "ou=People," + base_dn)
+   def nextuid(conn, uid_base_dn):
+       conn.search(uid_base_dn, "(objectClass=posixAccount)",
+                   attributes="uidNumber")
+       ids = sorted(set(uid_range) - set(e.uidNumber.value for e in
+                                         conn.entries))
+       return ids.pop(0)
+
+Please take into account that the code above has been written as a simple
+example and is not optimized in several aspects.
+
+* The function queries the directory for all already registered ``uidNumbers``
+  and generates a list of free ``ids`` in a give range but it returns just the
+  first item/id in the list.
+
+* The function queries the directory at every call.
+
+* The function returns the same ``uidNumber`` twice if the directory has not
+  been changed between both calls.
+
+Nevertheless we can load this function into the current namespace of a new
+ldap3-orm interactive shell::
+
+   $ ldap3-ipython -m userid.py
+
+and query for the next free ``uidNumber`` using:
+
+.. code-block:: ipython
+
+   In [1]: nextuid()
+   Out[1]: 20000
+
+Let's have a look at the import statement again::
+
+  from ldap3_orm.connection import connection, base_dn, conn
+
+* ``connection`` is the decorator
+* ``base_dn`` holds the `ldap3-ipython` ``base_dn`` setting
+* ``conn`` holds the active
+  :py:class:`ldap3.Connection <ldap3.core.connection.Connection>` created
+  during startup of `ldap3-ipython`
+
+Let's have a look at the function signature::
+
+   @connection(conn, "ou=People," + base_dn)
+   def nextuid(conn, uid_base_dn):
+
+* The active :py:class:`ldap3.Connection <ldap3.core.connection.Connection>`
+  will be passed internally to ``nextuid()`` as first argument.
+* The search base ``"ou=People," + base_dn`` will be passed internally to the
+  function as second argument.

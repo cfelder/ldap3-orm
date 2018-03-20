@@ -9,6 +9,7 @@ import argparse
 import textwrap
 from IPython.terminal.embed import InteractiveShellEmbed
 from ldap3 import Connection
+import ldap3_orm.connection
 from ldap3_orm.pycompat import callable, iteritems, file_types
 # pylint: disable=unused-import
 # pylint: disable=protected-access
@@ -128,57 +129,20 @@ def parse_args(argv):
     return ns
 
 
-def _add(conn, entry):
-    return conn.add(entry.entry_dn, entry.object_classes,
-                    entry.entry_attributes_as_dict)
-
-
-def _delete(conn, entry):
-    return conn.delete(entry.entry_dn)
-
-
-def _search(conn, search_base, *args, **kwargs):
-    return conn.search(search_base, *args, **kwargs)
-
 def main(argv):
     ns_args = parse_args(argv)
     if ns_args.url and ns_args.username and ns_args.password:
-        conn = Connection(ns_args.url, ns_args.username, ns_args.password,
-                       auto_bind=True)
-        def add(entry):
-            """Adds a new ``entry`` to the connected LDAP.
-
-            The ``entry`` is passed to the active
-            :py:class:`ldap3.Connection <ldap3.core.connection.Connection>`
-            ``conn`` in order to create a new LDAP entry.
-
-            """
-            return _add(conn, entry)
-        def delete(entry):
-            """Deletes an ``entry`` from the connected LDAP.
-
-            The ``entry`` is passed to the active
-            :py:class:`ldap3.Connection <ldap3.core.connection.Connection>`
-            ``conn`` in order to delete an existing LDAP entry with the
-            specified ``DN``.
-
-            """
-            return _delete(conn, entry)
+        ldap3_orm.connection.conn = Connection(ns_args.url, ns_args.username,
+                                               ns_args.password, auto_bind=True)
+        # add conn to locals() in order to populate the new namespace
+        conn = ldap3_orm.connection.conn
         if ns_args.base_dn:
-            def search(*args, **kwargs):
-                """Search the connected LDAP.
-
-                Searches in the connected LDAP using the active
-                :py:class:`ldap3.Connection <ldap3.core.connection.Connection>`
-                ``conn`` and the configured ``base_dn`` for ``search_base``.
-                Further arguments are passed to
-                :py:func:`ldap3.Connection.search
-                <ldap3.core.connection.Connection.search>` function.
-
-                See ``help(ldap3.Connection.search)`` for more details.
-
-                """
-                return _search(conn, ns_args.base_dn, *args, **kwargs)
+            ldap3_orm.connection.base_dn = ns_args.base_dn
+            # pylint: disable=unused-import
+            from ldap3_orm.basic import search
+        # add basic convenience functions to local namespace
+        # pylint: disable=unused-import
+        from ldap3_orm.basic import add, delete
     else:
         print("Connection object 'conn' has not been created.", file=sys.stderr)
         print("- Insufficient connection parameters -", file=sys.stderr)
