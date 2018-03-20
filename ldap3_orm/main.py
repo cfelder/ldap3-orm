@@ -8,8 +8,8 @@ from os import getenv, path
 import argparse
 import textwrap
 from IPython.terminal.embed import InteractiveShellEmbed
-from six import callable, iteritems
 from ldap3 import Connection
+from ldap3_orm.pycompat import callable, iteritems, file_types
 # pylint: disable=unused-import
 # pylint: disable=protected-access
 # noinspection PyProtectedMember
@@ -43,7 +43,7 @@ class ConfigurationError(Exception):
 
 def _exec(path_or_file, globals=None, locals=None):
     ns = locals or {}
-    if isinstance(path_or_file, file):
+    if isinstance(path_or_file, file_types):
         fileobj = path_or_file
     else:
         fileobj = argparse.FileType('r')(path_or_file)
