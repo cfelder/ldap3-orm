@@ -204,7 +204,7 @@ class EntryBase(_Entry):
                 raise TypeError("__init__() got an unexpected keyword argument"
                                 " '%s'" % k)
         # check remaining attributes
-        for key in attrdefs.keys():
+        for key in list(attrdefs):
             if attrdefs[key].default != NotImplemented:
                 attrdef = attrdefs.pop(key)
                 self._create_attribute_or_parameter(attrdef, attrdef.default)
