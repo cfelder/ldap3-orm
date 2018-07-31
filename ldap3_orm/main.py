@@ -8,6 +8,12 @@ from os import getenv, path
 import argparse
 import textwrap
 from IPython.terminal.embed import InteractiveShellEmbed
+try:
+    from ipykernel.ipkernel import IPythonKernel
+    from ipykernel.kernelapp import IPKernelApp
+except ImportError:
+    IPythonKernel = None
+    IPKernelApp = None
 from ldap3 import Connection
 import ldap3_orm.connection
 from ldap3_orm.pycompat import callable, iteritems, file_types
@@ -93,6 +99,7 @@ def _create_parsers():
                         help="the password of the user for simple bind")
     parser.add_argument("--base_dn",
                         help="ldap base dn")
+    parser.add_argument("-f", help="jupyter kernel connection file (.json)")
     parser.add_argument("-m", "--modules", nargs='*',
                         help="python modules to include into current namespace")
     return parent, parser
@@ -103,6 +110,7 @@ def create_parser():
 
 
 def parse_args(argv):
+    argv = argv[:]
     parent, parser = _create_parsers()
     # run parent parser to gather cliargs from the configuration file
     ns = parent.parse_known_args(argv[1:])[0]
@@ -148,7 +156,8 @@ def main(argv):
         print("- Insufficient connection parameters -", file=sys.stderr)
     # update local namespace `ns` with cli arguments
     ns = dict(locals())
-    modules = ns_args.__dict__.pop("modules") or []
+    modules = ns_args.__dict__.pop("modules", []) or []
+    kernelconn = ns_args.__dict__.pop('f', None)
     ns.update(ns_args.__dict__)
     del ns["ns_args"]  # remove temporary namespace variable
     docs = [name + '\t-> ' + cls_or_func.__doc__.split('\n')[0]
@@ -158,16 +167,31 @@ def main(argv):
     # execute modules given on the command line in current namespace
     for p in modules:
         _exec(p, ns, ns)
-    InteractiveShellEmbed(banner1="ldap3-orm interactive shell ({version}, "
-                                  "{revision})".format(version=__version__,
-                                                       revision=__revision__),
-                          user_ns=ns)(textwrap.dedent("""\
+
+    banner1 = "ldap3-orm interactive shell ({version}, {revision})".format(
+        version=__version__, revision=__revision__)
+    banner2 = textwrap.dedent("""\
         The following convenience functions are available:
 
         {functions}
 
         The current Connection can be accessed using 'conn'.
-        """).format(functions='\n'.join(docs)) if docs else ' ')
+        """).format(functions='\n'.join(docs)) if docs else ' '
+
+
+    if kernelconn:  # jupyter kernel connection file
+        if IPythonKernel and IPKernelApp:
+            class Ldap3IPythonKernel(IPythonKernel):
+                implementation = "ldap3-ipython"
+                implementation_version = __version__
+                banner = banner1 + '\n\n' + banner2
+
+            IPKernelApp.launch_instance(kernel_class=Ldap3IPythonKernel,
+                                        user_ns=ns)
+        else:
+            raise ImportError("No module named ipykernel")
+    else:
+        InteractiveShellEmbed(banner1=banner1, user_ns=ns)(banner2)
     return 0
 
 
