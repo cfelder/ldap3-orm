@@ -62,3 +62,6 @@ using the following command::
    In [2]: add(u)
    Out[2]: True
 
+The same code can be used in `Jupyter <http://jupyter.org>`_ when using the
+integrated :ref:`ldap3-ipython kernel <ipython_jupyter_kernel>` which provides
+the same functionality as the ldap3-orm shell mentioned above.

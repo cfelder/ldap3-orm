@@ -8,6 +8,8 @@ ldap3-ipython
    :prog: ldap3-ipython
    :noepilog:
 
+.. _ipython_config:
+
 Configuration File
 ==================
 
@@ -262,3 +264,24 @@ Let's have a look at the function signature::
   will be passed internally to ``nextuid()`` as first argument.
 * The search base ``"ou=People," + base_dn`` will be passed internally to the
   function as second argument.
+
+.. _ipython_jupyter_kernel:
+
+Jupyter Kernel
+==============
+
+ldap3-orm can be used in `Jupyter <http://jupyter.org>`_ either by using the
+`IPython kernel <https://ipython.readthedocs.io/en/stable/install/kernel_install.html>`_
+or by using the ldap3-ipython kernel. The latter provides already an active
+:py:class:`ldap3.Connection <ldap3.core.connection.Connection>` which can be
+accessed using ``conn`` and some convenience funtions just as well as the
+ldap3-orm interactive shell if configured properly without writing a single
+line of code.
+
+The ldap3-ipython kernel shares the same :ref:`ipython_config` as
+``ldap3-ipython``. As it is not possible to pass arguments to the
+jupyter kernel invocation, e.g. when using the
+``jupyter notebook`` command, all necessary options should be specified in
+the :ref:`ipython_config`. The same set of functionality as if launching
+``ldap3-ipython`` without arguments will be accessible in every jupyter
+notebook using the ldap3-ipython kernel.
