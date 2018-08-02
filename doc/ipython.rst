@@ -30,6 +30,10 @@ in the form key = value, e.g.::
        "/path/to/module/containing/EntryBase/subclasses",
    ]
 
+   pythonpaths = [
+      "/path/to/modules/needed/by/modules/listed/above",
+   ]
+
 Usage
 =====
 

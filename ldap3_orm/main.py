@@ -100,6 +100,8 @@ def _create_parsers():
     parser.add_argument("--base_dn",
                         help="ldap base dn")
     parser.add_argument("-f", help="jupyter kernel connection file (.json)")
+    parser.add_argument("-p", "--pythonpaths", nargs='*',
+                        help="paths prepended in PYTHONPATH environment")
     parser.add_argument("-m", "--modules", nargs='*',
                         help="python modules to include into current namespace")
     return parent, parser
@@ -157,6 +159,7 @@ def main(argv):
     # update local namespace `ns` with cli arguments
     ns = dict(locals())
     modules = ns_args.__dict__.pop("modules", []) or []
+    pythonpaths = ns_args.__dict__.pop("pythonpaths", []) or []
     kernelconn = ns_args.__dict__.pop('f', None)
     ns.update(ns_args.__dict__)
     del ns["ns_args"]  # remove temporary namespace variable
@@ -164,6 +167,8 @@ def main(argv):
             for name, cls_or_func in iteritems(locals())
             if callable(cls_or_func) and cls_or_func.__doc__]
 
+    # prepend pythonpaths to sys.path (PYTHONPATH)
+    sys.path = pythonpaths + sys.path
     # execute modules given on the command line in current namespace
     for p in modules:
         _exec(p, ns, ns)
