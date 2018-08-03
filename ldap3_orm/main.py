@@ -15,6 +15,7 @@ except ImportError:
     IPythonKernel = None
     IPKernelApp = None
 from ldap3 import Connection
+from ldap3_orm._config import ConfigurationError, config, read_config
 from ldap3_orm.utils import execute
 import ldap3_orm.connection
 from ldap3_orm.pycompat import callable, iteritems
@@ -45,12 +46,11 @@ along with ldap3-orm. If not, see <http://www.gnu.org/licenses/>.
 """
 
 
-class ConfigurationError(Exception):
-    """Configuration parameter is not allowed."""
+ignored_args_in_config = ['f', "config"]
 
 
 def load_config(configfile):
-    return execute(configfile)
+    return read_config(configfile, cls=argparse.FileType('r'))
 
 
 def _create_parsers():
@@ -82,6 +82,8 @@ def _create_parsers():
         formatter_class=argparse.RawDescriptionHelpFormatter,
         parents=[parent],
     )
+    # all arguments defined in its long form here should have a corresponding
+    # class attribute in `ldap3_orm._config.config`.
     parser.add_argument("--url",
                         help="ldap server url in the scheme://hostname:port")
     parser.add_argument("--username",
@@ -115,19 +117,31 @@ def parse_args(argv):
     if not ns.config and path.isfile(configfile):
         ns.config = configfile
     if ns.config:
-        config = load_config(ns.config)
-        if "config" in config or "help" in config:
+        cfg = load_config(ns.config)
+        if "config" in cfg or "help" in cfg:
             raise ConfigurationError("Configuration parameters 'config' and/or "
                                      "'help' are not allowed in the "
                                      "configuration file '%s'."
-                                     % ns.config.name)
-        for k, v in iteritems(config):
-            argv.append("--" + k)
-            if isinstance(v, list):
-                argv += v
-            else:
-                argv.append(v)
+                                     % ns.config)
+        # generate kwargs from configuration file
+        # for arguments known by the parser
+        for k, v in iteritems(cfg):
+            kwarg = "--" + k
+            if kwarg in parser._option_string_actions:
+                argv.append(kwarg)
+                if isinstance(v, list):
+                    argv += v
+                else:
+                    argv.append(v)
+    # parse arguments passed to function and from configuration file
     ns = parser.parse_args(argv[1:])
+    # update configuration with arguments from parser
+    cfg.update(ns.__dict__)
+    for key in ignored_args_in_config:
+        cfg.pop(key, None)
+    # pass configuration to `ldap3_orm.config.config` object
+    # this will raise an `ConfigurationError` on unknown arguments
+    config.apply(cfg)
     return ns
 
 
