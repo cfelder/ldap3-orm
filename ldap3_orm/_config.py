@@ -47,26 +47,57 @@ class ConfigurationError(Exception):
 
 
 class config(object):
+    """Holds all configuration parameters
+
+    This is a configuration singleton populated on startup of ``ldap3-ipython``
+    with entries given as command line arguments and/or entries from the
+    configuration file.
+
+    This class is helpful for creating reusable modules based on
+    configuration parameters, e.g. ``base_dn`` which usually changes
+    when administrating different domains, e.g. ``example.com`` vs.
+    ``example.org`` which results in the following ``base_dn`` settings::
+
+        base_dn = "dc=example,dc=com"
+        base_dn = "dc=example,dc=org"
+
+    If this class is imported from the :py:mod:`ldap3_orm.config` module
+    before any configuration has been applied this class will be populated
+    from the default configuration file if this exists or left unpopulated
+    otherwise.
+
+    """
     _applied = False  # apply only once
 
     # -- cli and configuration file arguments ----------------------------
     url = None
+    """Ldap server url in the scheme://hostname:port"""
+
     base_dn = ''
+    """Ldap base dn"""
+
     username = None
+    """The account of the user to log in for simple bind"""
+
     password = None
+    """The password of the user for simple bind"""
 
     modules = None
+    """Python modules to include into current namespace in ``ldap3-ipython``"""
+
     pythonpaths = None
+    """Paths prepended in PYTHONPATH environment in ``ldap3-ipython``"""
 
     # -- arguments only supported in the configuration file --------------
     userconfig = {}
+    """Dictionary containing user-defined configuration entries."""
 
     @classmethod
     def apply(cls, config=None):
         if cls._applied:
             return
 
-        if not config and path.isfile(CONFIGFILE):
+        if config is None and path.isfile(CONFIGFILE):
             config = read_config()
 
         for attr, value in iteritems(config):

@@ -2,6 +2,8 @@
 ldap3-ipython
 *************
 
+.. _ipython_argparse:
+
 .. argparse::
    :module: ldap3_orm.main
    :func: create_parser
@@ -255,7 +257,9 @@ Let's have a look at the import statement again::
   from ldap3_orm.config import config
   from ldap3_orm.connection import connection, conn
 
-* ``config`` holds the :py:class:`~ldap3_orm.config.config` object
+* ``config`` holds the :py:class:`~ldap3_orm.config.config` singleton with all
+  parameters given in the :ref:`ipython_config` and/or on the
+  :ref:`command line <ipython_argparse>`.
 * ``connection`` is the decorator
 * ``conn`` holds the active
   :py:class:`ldap3.Connection <ldap3.core.connection.Connection>` created

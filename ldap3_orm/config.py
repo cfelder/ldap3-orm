@@ -1,16 +1,16 @@
 # coding: utf-8
 """
-This module provides the configuration object
+This module provides the configuration singleton
 :py:class:`~ldap3_orm._config.config` which is populated on startup of
 ``ldap3-ipython`` with entries from command line arguments and entries from
 the configuration file.
 
 Internal ldap3_orm modules should not use this module and import directly
 from `_config` instead. Otherwise ``ldap3-ipython`` cannot apply
-configuration options to the :py:class:`~ldap3_orm._config.config` object
+configuration options to the :py:class:`~ldap3_orm._config.config` singleton
 because ``config.apply()`` will load the default configuration file if
 available and start with an unconfigured :py:class:`~ldap3_orm._config.config`
-object otherwise.
+otherwise.
 """
 
 from ldap3_orm._config import config

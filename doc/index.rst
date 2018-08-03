@@ -27,6 +27,7 @@ Further reading
 
    install
    classes/entry
+   classes/config
    ipython
 
 Indices and tables
