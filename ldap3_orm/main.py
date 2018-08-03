@@ -86,6 +86,10 @@ def _create_parsers():
             modules = [
                 "/path/to/module/containing/EntryBase/subclasses",
             ]
+
+            pythonpaths = [
+                "/path/to/modules/needed/by/modules/listed/above",
+            ]
         '''),
         formatter_class=argparse.RawDescriptionHelpFormatter,
         parents=[parent],
