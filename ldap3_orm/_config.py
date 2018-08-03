@@ -51,7 +51,7 @@ class config(object):
 
     # -- cli and configuration file arguments ----------------------------
     url = None
-    base_dn = None
+    base_dn = ''
     username = None
     password = None
 

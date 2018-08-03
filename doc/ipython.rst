@@ -211,13 +211,14 @@ Assuming we want to search for the next free ``uidNumber`` for a
 .. code-block:: python
    :caption: userid.py
 
-   from ldap3_orm.connection import connection, base_dn, conn
+   from ldap3_orm.config import config
+   from ldap3_orm.connection import connection, conn
 
 
    uid_range = range(20000, 25000 + 1)  # min, max uid
 
 
-   @connection(conn, "ou=People," + base_dn)
+   @connection(conn, "ou=People," + config.base_dn)
    def nextuid(conn, uid_base_dn):
        conn.search(uid_base_dn, "(objectClass=posixAccount)",
                    attributes="uidNumber")
@@ -229,7 +230,7 @@ Please take into account that the code above has been written as a simple
 example and is not optimized in several aspects.
 
 * The function queries the directory for all already registered ``uidNumbers``
-  and generates a list of free ``ids`` in a give range but it returns just the
+  and generates a list of free ``ids`` in a given range but it returns just the
   first item/id in the list.
 
 * The function queries the directory at every call.
@@ -251,23 +252,24 @@ and query for the next free ``uidNumber`` using:
 
 Let's have a look at the import statement again::
 
-  from ldap3_orm.connection import connection, base_dn, conn
+  from ldap3_orm.config import config
+  from ldap3_orm.connection import connection, conn
 
+* ``config`` holds the :py:class:`~ldap3_orm.config.config` object
 * ``connection`` is the decorator
-* ``base_dn`` holds the `ldap3-ipython` ``base_dn`` setting
 * ``conn`` holds the active
   :py:class:`ldap3.Connection <ldap3.core.connection.Connection>` created
   during startup of `ldap3-ipython`
 
 Let's have a look at the function signature::
 
-   @connection(conn, "ou=People," + base_dn)
+   @connection(conn, "ou=People," + config.base_dn)
    def nextuid(conn, uid_base_dn):
 
 * The active :py:class:`ldap3.Connection <ldap3.core.connection.Connection>`
   will be passed internally to ``nextuid()`` as first argument.
-* The search base ``"ou=People," + base_dn`` will be passed internally to the
-  function as second argument.
+* The search base ``"ou=People," + config.base_dn`` will be passed internally
+  to the function as second argument.
 
 .. _ipython_jupyter_kernel:
 
@@ -278,7 +280,7 @@ ldap3-orm can be used in `Jupyter <http://jupyter.org>`_ either by using the
 `IPython kernel <https://ipython.readthedocs.io/en/stable/install/kernel_install.html>`_
 or by using the ldap3-ipython kernel. The latter provides already an active
 :py:class:`ldap3.Connection <ldap3.core.connection.Connection>` which can be
-accessed using ``conn`` and some convenience funtions just as well as the
+accessed using ``conn`` and some convenience functions just as well as the
 ldap3-orm interactive shell if configured properly without writing a single
 line of code.
 

@@ -1,6 +1,7 @@
 # coding: utf-8
 
-from ldap3_orm.connection import connection, conn, base_dn
+from ldap3_orm._config import config
+from ldap3_orm.connection import connection, conn
 # pylint: disable=unused-import
 # pylint: disable=protected-access
 # noinspection PyProtectedMember
@@ -54,7 +55,7 @@ def delete(conn, entry):
     return conn.delete(entry.entry_dn)
 
 
-@connection(conn, base_dn)
+@connection(conn, config.base_dn)
 def search(conn, *args, **kwargs):
     """Search the connected LDAP.
 

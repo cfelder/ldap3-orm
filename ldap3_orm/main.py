@@ -152,8 +152,7 @@ def main(argv):
                                                ns_args.password, auto_bind=True)
         # add conn to locals() in order to populate the new namespace
         conn = ldap3_orm.connection.conn
-        if ns_args.base_dn:
-            ldap3_orm.connection.base_dn = ns_args.base_dn
+        if config.base_dn:
             # pylint: disable=unused-import
             from ldap3_orm.basic import search
         # add basic convenience functions to local namespace

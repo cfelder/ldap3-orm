@@ -1,4 +1,17 @@
 # coding: utf-8
+"""
+This module provides the configuration object
+:py:class:`~ldap3_orm._config.config` which is populated on startup of
+``ldap3-ipython`` with entries from command line arguments and entries from
+the configuration file.
+
+Internal ldap3_orm modules should not use this module and import directly
+from `_config` instead. Otherwise ``ldap3-ipython`` cannot apply
+configuration options to the :py:class:`~ldap3_orm._config.config` object
+because ``config.apply()`` will load the default configuration file if
+available and start with an unconfigured :py:class:`~ldap3_orm._config.config`
+object otherwise.
+"""
 
 from ldap3_orm._config import config
 # pylint: disable=unused-import
@@ -26,6 +39,5 @@ You should have received a copy of the GNU Lesser General Public License
 along with ldap3-orm. If not, see <http://www.gnu.org/licenses/>.
 
 """
-
 
 config.apply()

@@ -1,5 +1,6 @@
 # coding: utf-8
 
+from ldap3_orm._config import config
 # pylint: disable=unused-import
 # pylint: disable=protected-access
 # noinspection PyProtectedMember
@@ -28,7 +29,6 @@ along with ldap3-orm. If not, see <http://www.gnu.org/licenses/>.
 
 
 conn = NotImplemented
-base_dn = ""
 
 
 def connection(conn, *add_args):
