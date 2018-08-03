@@ -15,8 +15,9 @@ except ImportError:
     IPythonKernel = None
     IPKernelApp = None
 from ldap3 import Connection
+from ldap3_orm.utils import execute
 import ldap3_orm.connection
-from ldap3_orm.pycompat import callable, iteritems, file_types
+from ldap3_orm.pycompat import callable, iteritems
 # pylint: disable=unused-import
 # pylint: disable=protected-access
 # noinspection PyProtectedMember
@@ -48,21 +49,8 @@ class ConfigurationError(Exception):
     """Configuration parameter is not allowed."""
 
 
-def _exec(path_or_file, globals=None, locals=None):
-    ns = locals or {}
-    if isinstance(path_or_file, file_types):
-        fileobj = path_or_file
-    else:
-        fileobj = argparse.FileType('r')(path_or_file)
-    try:
-        exec(compile(fileobj.read(), fileobj.name, "exec"), globals, ns)
-    finally:
-        fileobj.close()
-    return ns
-
-
 def load_config(configfile):
-    return _exec(configfile)
+    return execute(configfile)
 
 
 def _create_parsers():
@@ -175,7 +163,7 @@ def main(argv):
     sys.path = pythonpaths + sys.path
     # execute modules given on the command line in current namespace
     for p in modules:
-        _exec(p, ns, ns)
+        execute(p, ns, ns)
 
     banner1 = "ldap3-orm interactive shell ({version}, {revision})".format(
         version=__version__, revision=__revision__)
