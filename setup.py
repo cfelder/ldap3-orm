@@ -15,8 +15,6 @@ except ImportError as err:
     import traceback
     install_kernel_spec = None
     exc_info_install_kernel_spec = sys.exc_info()
-finally:
-    sys.exc_clear()
 try:
     from tempfile import TemporaryDirectory
 except ImportError:  # not available in python 2.7
