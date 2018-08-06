@@ -1,0 +1,4 @@
+-r requirements-bin.txt
+jupyter_core>=4.4.0
+jupyter_client>=5.1.0
+ipykernel>=4.6.1
