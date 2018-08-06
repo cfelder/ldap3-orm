@@ -3,7 +3,7 @@ User model example
 
 The following code creates a simple ORM model for a LDAP user entry:
 
-.. literalinclude:: examples/user.py
+.. literalinclude:: /examples/user.py
 
 A User object can be instantiated using *keyword arguments* for each class
 attribute of type :py:class:`~ldap3.abstract.attrDef.AttrDef`::

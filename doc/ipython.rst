@@ -80,7 +80,7 @@ same connection, see below:
 
 Assuming we have created the following ORM model for a LDAP user entry:
 
-.. literalinclude:: examples/user.py
+.. literalinclude:: /examples/user.py
    :caption: user.py
 
 We can load this code into the current namespace of a new ldap3-orm

@@ -17,7 +17,7 @@ License
 The ldap3-orm library is open source software released under the
 **LGPL-3.0+ license** (http://www.gnu.org/licenses/lgpl-3.0.html).
 
-.. include:: examples/user.rst
+.. include:: /examples/user.rst
 
 Further reading
 ---------------
