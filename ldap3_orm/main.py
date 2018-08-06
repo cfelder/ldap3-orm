@@ -133,6 +133,8 @@ def parse_args(argv):
                     argv += v
                 else:
                     argv.append(v)
+    else:
+        cfg = {}
     # parse arguments passed to function and from configuration file
     ns = parser.parse_args(argv[1:])
     # update configuration with arguments from parser
