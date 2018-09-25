@@ -88,6 +88,10 @@ kernel_json = {
 }
 
 
+with open("README.rst", 'r') as fd:
+    long_description = fd.read()
+
+
 class test(Command):
     description = "run nosetest test suite"
 
@@ -167,9 +171,10 @@ setup(cmdclass={
       name="ldap3-orm",
       version=__version__,
       description="ldap3-orm, object-relational mapping for ldap3",
+      long_description=long_description,
       author="Christian Felder",
       author_email="webmaster@bsm-felder.de",
-      url="http://code.bsm-felder.de/doc/ldap3-orm",
+      url="https://github.com/cfelder/ldap3-orm",
       license="LGPL-3.0+",
       scripts=find_scripts(),
       packages=find_packages(exclude=["test", "test.*"]),

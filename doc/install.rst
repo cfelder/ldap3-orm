@@ -21,14 +21,13 @@ Git repository and code review
 ------------------------------
 
 ldap3-orm is maintained in a git repository hosted at
-`code.bsm-felder.de <https://code.bsm-felder.de>`_.
-In order to checkout a working copy anonymously use the following command. ::
+`github <https://github.com/cfelder/ldap3-orm>`_.
+In order to checkout a working copy use the following command. ::
 
-  git clone -c http.sslverify=false \
-    https://code.bsm-felder.de/review/bsm-felder/ldap/ldap3-orm
+  git clone https://github.com/cfelder/ldap3-orm.git
 
-You will find all sources in the directory ``ldap3-orm`` poiting to the current
-*master branch* which reflects the current *in develeopment* version.
+You will find all sources in the directory ``ldap3-orm`` pointing to the current
+*master branch* which reflects the current *in development* version.
 
 To refer to a specific release you should checkout a tagged version, e.g. ::
 
@@ -36,7 +35,7 @@ To refer to a specific release you should checkout a tagged version, e.g. ::
    $ git tag
    v0.1.0
 
-   $ git checkout v0.1.0 -b release-v0.1.0
+   $ git checkout tags/v0.1.0 -b release-v0.1.0
 
 Install requirements using pip
 ------------------------------
