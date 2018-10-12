@@ -6,9 +6,9 @@ import os
 import os.path
 import json
 from distutils import log
-from distutils.core import Command
-from distutils.command.install import install as _install
+from setuptools import Command
 from setuptools import find_packages, setup
+from setuptools.command.install import install as _install
 try:
     from jupyter_client.kernelspec import install_kernel_spec
 except ImportError as err:
