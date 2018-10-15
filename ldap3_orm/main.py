@@ -5,6 +5,7 @@ from __future__ import print_function
 
 import sys
 from os import getenv, path
+from getpass import getpass
 import argparse
 import textwrap
 from IPython.terminal.embed import InteractiveShellEmbed
@@ -149,9 +150,21 @@ def parse_args(argv):
 
 def main(argv):
     ns_args = parse_args(argv)
-    if ns_args.url and ns_args.username and ns_args.password:
-        ldap3_orm.connection.conn = Connection(ns_args.url, ns_args.username,
-                                               ns_args.password, auto_bind=True)
+    if ns_args.url:
+        if ns_args.username:
+            if ns_args.password is not None:
+                password = ns_args.password
+            else:
+                password = getpass("Password for '%s':" % ns_args.username)
+            config.connconfig.update(user=ns_args.username,
+                                     password=password)
+            if "auto_bind" not in config.connconfig:
+                config.connconfig["auto_bind"] = True
+        if config.connconfig:
+            ldap3_orm.connection.conn = Connection(ns_args.url,
+                                                   **config.connconfig)
+        else:
+            ldap3_orm.connection.conn = Connection(ns_args.url, auto_bind=True)
         # add conn to locals() in order to populate the new namespace
         conn = ldap3_orm.connection.conn
         if config.base_dn:

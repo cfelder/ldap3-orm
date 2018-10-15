@@ -92,6 +92,10 @@ class config(object):
     userconfig = {}
     """Dictionary containing user-defined configuration entries."""
 
+    connconfig = {}
+    """Dictionary containing keyword arguments for
+    :py:class:`ldap3.Connection <ldap3.core.connection.Connection>`."""
+
     @classmethod
     def apply(cls, config=None):
         if cls._applied:

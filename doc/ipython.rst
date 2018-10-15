@@ -36,6 +36,29 @@ in the form key = value, e.g.::
       "/path/to/modules/needed/by/modules/listed/above",
    ]
 
+The configuration file above is an example for using ldap simple
+authentication. Different authentication mechanisms supported in
+:py:class:`ldap3.Connection <ldap3.core.connection.Connection>` can be
+configured providing the ``url`` entry and all relevant keyword arguments
+for its constructor using the ``connconfig`` dictionary, e.g.::
+
+   url = "ldapi:///var/run/slapd/ldapi"
+   base_dn = "dc=example,dc=com"
+
+   modules = [
+       "/path/to/module/containing/EntryBase/subclasses",
+   ]
+
+   pythonpaths = [
+      "/path/to/modules/needed/by/modules/listed/above",
+   ]
+
+   connconfig = dict(
+      authentication = "SASL",
+      sasl_mechanism = "GSSAPI",
+      sasl_credentials = (True, ),
+   )
+
 Usage
 =====
 
