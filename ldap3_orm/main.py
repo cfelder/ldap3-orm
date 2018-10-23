@@ -15,10 +15,8 @@ try:
 except ImportError:
     IPythonKernel = None
     IPKernelApp = None
-from ldap3 import Connection
 from ldap3_orm._config import ConfigurationError, config, read_config
 from ldap3_orm.utils import execute
-import ldap3_orm.connection
 from ldap3_orm.pycompat import callable, iteritems
 # pylint: disable=unused-import
 # pylint: disable=protected-access
@@ -158,15 +156,9 @@ def main(argv):
                 password = getpass("Password for '%s':" % ns_args.username)
             config.connconfig.update(user=ns_args.username,
                                      password=password)
-            if "auto_bind" not in config.connconfig:
-                config.connconfig["auto_bind"] = True
-        if config.connconfig:
-            ldap3_orm.connection.conn = Connection(ns_args.url,
-                                                   **config.connconfig)
-        else:
-            ldap3_orm.connection.conn = Connection(ns_args.url, auto_bind=True)
         # add conn to locals() in order to populate the new namespace
-        conn = ldap3_orm.connection.conn
+        # pylint: disable=unused-import
+        from ldap3_orm.connection import conn
         if config.base_dn:
             # pylint: disable=unused-import
             from ldap3_orm.basic import search

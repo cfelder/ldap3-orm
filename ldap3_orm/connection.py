@@ -1,6 +1,16 @@
 # coding: utf-8
+"""
+This module provides the connection singleton derived from the configuration
+and the connection decorator.
 
-from ldap3_orm._config import config
+In order to use just the :py:decorator:`ldap3_orm.connection.connection`
+or the :py:func:`ldap3_orm.connection.create_connection` without creating the
+connection singleton please import directly from `_connection`.
+"""
+
+from ldap3_orm.config import config
+# pylint: disable=unused-import
+from ldap3_orm._connection import connection, create_connection
 # pylint: disable=unused-import
 # pylint: disable=protected-access
 # noinspection PyProtectedMember
@@ -28,22 +38,4 @@ along with ldap3-orm. If not, see <http://www.gnu.org/licenses/>.
 """
 
 
-conn = NotImplemented
-
-
-def connection(conn, *add_args):
-    """Passes a :py:class:`~ldap3.core.connection.Connection` object to the
-    decorated function as first argument and further arguments passed to the
-    decorator.
-
-    """
-    def decorator(func):
-        def new_func(*args, **kwargs):
-            new_args = add_args + args
-            if conn == NotImplemented:
-                return func(*new_args, **kwargs)
-            return func(conn, *new_args, **kwargs)
-        new_func.__name__ = func.__name__
-        new_func.__doc__ = func.__doc__
-        return new_func
-    return decorator
+conn = create_connection(config.url, config.connconfig)
