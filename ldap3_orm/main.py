@@ -15,9 +15,10 @@ try:
 except ImportError:
     IPythonKernel = None
     IPKernelApp = None
-from ldap3_orm._config import CONFIGDIR, ConfigurationError, config, read_config
+from ldap3_orm._config import CONFIGDIR, ConfigurationError, \
+    FallbackFileType, config, read_config
 from ldap3_orm.utils import execute
-from ldap3_orm.pycompat import callable, iteritems
+from ldap3_orm.pycompat import callable, iteritems, reraise
 # pylint: disable=unused-import
 # pylint: disable=protected-access
 # noinspection PyProtectedMember
@@ -48,14 +49,31 @@ along with ldap3-orm. If not, see <http://www.gnu.org/licenses/>.
 ignored_args_in_config = ['f', "config"]
 
 
+class ArgparseFallbackFileType(argparse.FileType, FallbackFileType):
+
+    def __init__(self, *args, **kwargs):
+        FallbackFileType.__init__(self, *args, **kwargs)
+        argparse.FileType.__init__(self, *args, **kwargs)
+
+    def __call__(self, path_or_filename):
+        try:
+            return argparse.FileType.__call__(self, path_or_filename)
+        except argparse.ArgumentTypeError:
+            exc_info = sys.exc_info()
+            try:
+                return FallbackFileType.__call__(self, path_or_filename)
+            except IOError:
+                reraise(*exc_info)
+
+
 def load_config(configfile):
     return read_config(configfile, cls=argparse.FileType('r'))
 
 
 def _create_parsers():
     parent = argparse.ArgumentParser(add_help=False)
-    parent.add_argument("-c", "--config", type=argparse.FileType('r'),
-                        help="configuration file with command line arguments")
+    parent.add_argument("-c", "--config", type=ArgparseFallbackFileType('r'),
+                        help="configuration file (name or full qualified path)")
     parser = argparse.ArgumentParser(
         description="ldap3-orm ipython shell",
         epilog=textwrap.dedent('''\

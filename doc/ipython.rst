@@ -36,6 +36,12 @@ in the form key = value, e.g.::
       "/path/to/modules/needed/by/modules/listed/above",
    ]
 
+The configuration file may provide additional configuration options, e.g. the
+``connconfig`` dictionary for using different authentication mechanisms or the
+``userconfig`` dictionary which may be used for providing configuration options
+for custom module implementations. For further information have a look at
+:py:class:`ldap3_orm.config.config`.
+
 The configuration file above is an example for using ldap simple
 authentication. Different authentication mechanisms supported in
 :py:class:`ldap3.Connection <ldap3.core.connection.Connection>` can be

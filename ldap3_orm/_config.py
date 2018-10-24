@@ -1,6 +1,9 @@
 # coding: utf-8
 
+from os import getenv, path
+
 from ldap3_orm.pycompat import iteritems
+from ldap3_orm.utils import execute
 # pylint: disable=unused-import
 # pylint: disable=protected-access
 # noinspection PyProtectedMember
@@ -27,10 +30,6 @@ along with ldap3-orm. If not, see <http://www.gnu.org/licenses/>.
 
 """
 
-import io
-from os import getenv, path
-from ldap3_orm.utils import execute
-
 
 CONFIGDIR = path.join(getenv("APPDATA",
                               path.expanduser(path.join("~", ".config"))),
@@ -38,12 +37,35 @@ CONFIGDIR = path.join(getenv("APPDATA",
 CONFIGFILE = path.join(CONFIGDIR, "default")
 
 
-def read_config(path=CONFIGFILE, cls=io.FileIO):
-    return execute(path, cls=cls)
-
-
 class ConfigurationError(Exception):
     """Configuration parameter is not allowed."""
+
+
+class FallbackFileType(object):
+    """Factory for creating file object types with fallback directory
+
+    Returns a file object using the builtin :py:func:`open`() function.
+
+    If the path passed to an instance of this class does not exist and
+    the path contains just a filename (no directories) this class tries
+    to open the file in the fallback directory.
+
+    """
+
+    def __init__(self, mode='r', fallback=CONFIGDIR, **kwargs):
+        self._mode = mode
+        self._kwargs = kwargs
+        self._fallback = fallback
+
+    def __call__(self, path_or_filename):
+        try:
+            return open(path_or_filename, self._mode, **self._kwargs)
+        except IOError:
+            # argument is just a filename (no directory components)
+            if path.basename(path_or_filename) == path_or_filename:
+                return open(path.join(self._fallback, path_or_filename),
+                            **self._kwargs)
+            raise
 
 
 class config(object):
@@ -113,3 +135,7 @@ class config(object):
             setattr(cls, attr, value)
 
         cls._applied = True
+
+
+def read_config(path=CONFIGFILE, cls=FallbackFileType('r')):
+    return execute(path, cls=cls)
