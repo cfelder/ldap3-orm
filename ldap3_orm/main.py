@@ -4,7 +4,7 @@
 from __future__ import print_function
 
 import sys
-from os import getenv, path
+from os import path
 from getpass import getpass
 import argparse
 import textwrap
@@ -15,7 +15,7 @@ try:
 except ImportError:
     IPythonKernel = None
     IPKernelApp = None
-from ldap3_orm._config import ConfigurationError, config, read_config
+from ldap3_orm._config import CONFIGDIR, ConfigurationError, config, read_config
 from ldap3_orm.utils import execute
 from ldap3_orm.pycompat import callable, iteritems
 # pylint: disable=unused-import
@@ -109,10 +109,7 @@ def parse_args(argv):
     parent, parser = _create_parsers()
     # run parent parser to gather cliargs from the configuration file
     ns = parent.parse_known_args(argv[1:])[0]
-    configdir = path.join(getenv("APPDATA",
-                                 path.expanduser(path.join("~", ".config"))),
-                          "ldap3-ipython")
-    configfile = path.join(configdir, "default")
+    configfile = path.join(CONFIGDIR, "default")
     if not ns.config and path.isfile(configfile):
         ns.config = configfile
     if ns.config:
