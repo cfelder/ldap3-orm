@@ -22,6 +22,9 @@ sys.path.insert(0, os.path.abspath('..'))
 
 from ldap3_orm._config import config
 config.apply({})  # do not load any configuration for doc generation
+import ldap3_orm._connection
+# do not create connection singleton for doc generation
+sys.modules['ldap3_orm.connection'] = ldap3_orm._connection
 # pylint: disable=protected-access
 # noinspection PyProtectedMember
 from ldap3_orm._version import __version__, __revision__
