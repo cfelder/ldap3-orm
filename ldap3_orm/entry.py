@@ -7,6 +7,8 @@ from ldap3.abstract import STATUS_WRITABLE as _STATUS_WRITEABLE
 from ldap3.abstract.entry import EntryState as _EntryState
 from ldap3.utils.ciDict import CaseInsensitiveWithAliasDict
 from ldap3.utils.dn import safe_dn
+
+from ldap3_orm.attribute import OperatorAttrDef
 from ldap3_orm.pycompat import add_metaclass, iteritems
 from ldap3_orm.parameter import Parameter, ParamDef
 # pylint: disable=unused-import
@@ -69,6 +71,16 @@ class EntryMeta(type):
         # update object_classes for current class
         newobjclss.update(set(cls.object_classes))
         cls.object_classes = newobjclss
+
+    def __getattr__(cls, key):
+        if "_attrdefs" in cls.__dict__:
+            if key in cls._attrdefs:
+                # create OperatorAttrDef instance from AttrDef instance
+                o = OperatorAttrDef.__new__(OperatorAttrDef)
+                o.__dict__ = cls._attrdefs[key].__dict__.copy()
+                return o
+        raise AttributeError("\'%s\' has no attribute \'%s\'" % (cls.__name__,
+                                                                 key))
 
 
 @add_metaclass(EntryMeta)
