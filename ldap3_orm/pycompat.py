@@ -3,7 +3,7 @@
 import io
 from six import PY2
 # pylint: disable=unused-import
-from six import add_metaclass, callable, iteritems, reraise
+from six import add_metaclass, callable, iteritems, reraise, string_types
 # pylint: disable=unused-import
 # pylint: disable=protected-access
 # noinspection PyProtectedMember
