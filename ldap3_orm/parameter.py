@@ -1,6 +1,7 @@
 # coding: utf-8
 
-from ldap3 import Attribute, AttrDef
+from ldap3 import Attribute
+from ldap3_orm.attribute import AttrDef
 # pylint: disable=unused-import
 # pylint: disable=protected-access
 # noinspection PyProtectedMember

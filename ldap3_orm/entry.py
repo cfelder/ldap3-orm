@@ -1,6 +1,6 @@
 # coding: utf-8
 
-from ldap3 import Attribute, AttrDef
+from ldap3 import Attribute
 from ldap3 import SEQUENCE_TYPES
 from ldap3 import Entry as _Entry
 from ldap3.abstract import STATUS_WRITABLE as _STATUS_WRITEABLE
@@ -8,7 +8,7 @@ from ldap3.abstract.entry import EntryState as _EntryState
 from ldap3.utils.ciDict import CaseInsensitiveWithAliasDict
 from ldap3.utils.dn import safe_dn
 
-from ldap3_orm.attribute import OperatorAttrDef
+from ldap3_orm.attribute import AttrDef, OperatorAttrDef
 from ldap3_orm.pycompat import add_metaclass, iteritems
 from ldap3_orm.parameter import Parameter, ParamDef
 # pylint: disable=unused-import

@@ -1,7 +1,7 @@
 # coding: utf-8
-# pylint: disable=unused-import
-from ldap3 import AttrDef
 
+# pylint: disable=unused-import
+from ldap3_orm.attribute import AttrDef
 from ldap3_orm.entry import EntryBase
 from ldap3_orm.parameter import ParamDef
 # pylint: disable=protected-access
