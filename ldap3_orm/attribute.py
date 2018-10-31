@@ -59,12 +59,25 @@ class OperatorAttrDef(AttrDef):
     _filter = ""
 
     @generative
-    @compiled_filter
-    def __eq__(self, other):
+    def _comparison_operator(self, other):
         filt = "({}={})".format(self.key, other)
         if self._filter:
             return self & filt
         self._filter = filt
+
+    @compiled_filter
+    def __eq__(self, other):
+        return self._comparison_operator(other)
+
+    @compiled_filter
+    def startswith(self, other):
+        other = "{}*".format(other)
+        return self._comparison_operator(other)
+
+    @compiled_filter
+    def endswith(self, other):
+        other = "*{}".format(other)
+        return self._comparison_operator(other)
 
     @generative
     def _combine_operator(self, other, op='&'):
