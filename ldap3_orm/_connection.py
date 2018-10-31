@@ -1,12 +1,11 @@
 # coding: utf-8
 
 from ldap3 import Connection as _Connection
-from ldap3_orm.attribute import OperatorAttrDef
 # pylint: disable=unused-import
 # pylint: disable=protected-access
 # noinspection PyProtectedMember
 from ldap3_orm._version import __version__, __revision__
-
+from ldap3_orm.utils import compile_filter
 
 __author__ = "Christian Felder <webmaster@bsm-felder.de>"
 __copyright__ = """Copyright 2018, Christian Felder
@@ -32,10 +31,8 @@ along with ldap3-orm. If not, see <http://www.gnu.org/licenses/>.
 class Connection(_Connection):
 
     def search(self, search_base, search_filter, *args, **kwargs):
-        if isinstance(search_filter, OperatorAttrDef):
-            search_filter = search_filter.compiled_filter()
-        return _Connection.search(self, search_base, search_filter, *args,
-                                  **kwargs)
+        query = compile_filter(search_filter)
+        return _Connection.search(self, search_base, query, *args, **kwargs)
 
 
 def create_connection(url, connconfig, auto_bind=True):

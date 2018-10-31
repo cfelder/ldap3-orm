@@ -1,6 +1,7 @@
 # coding: utf-8
 
 import io
+from ldap3_orm.attribute import OperatorAttrDef
 from ldap3_orm.pycompat import file_types
 # pylint: disable=unused-import
 # pylint: disable=protected-access
@@ -39,3 +40,9 @@ def execute(path_or_file, globals=None, locals=None, cls=io.FileIO):
     finally:
         fileobj.close()
     return ns
+
+
+def compile_filter(search_filter):
+    if isinstance(search_filter, OperatorAttrDef):
+        return search_filter.compiled_filter()
+    return search_filter
