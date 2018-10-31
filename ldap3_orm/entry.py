@@ -82,6 +82,16 @@ class EntryMeta(type):
         raise AttributeError("\'%s\' has no attribute \'%s\'" % (cls.__name__,
                                                                  key))
 
+    def __dir__(cls):
+        if hasattr(type, "__dir__"):  # python 3
+            attrs = set(type.__dir__(cls))
+        else:  # python 2
+            attrs = set()
+            for base in cls.__bases__:
+                attrs.update(set(base.__dict__.keys()))
+        attrs.update(cls._attrdefs.keys())
+        return list(attrs)
+
 
 @add_metaclass(EntryMeta)
 class EntryBase(_Entry):
