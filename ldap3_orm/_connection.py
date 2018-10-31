@@ -1,6 +1,7 @@
 # coding: utf-8
 
-from ldap3 import Connection
+from ldap3 import Connection as _Connection
+from ldap3_orm.attribute import OperatorAttrDef
 # pylint: disable=unused-import
 # pylint: disable=protected-access
 # noinspection PyProtectedMember
@@ -26,6 +27,15 @@ You should have received a copy of the GNU Lesser General Public License
 along with ldap3-orm. If not, see <http://www.gnu.org/licenses/>.
 
 """
+
+
+class Connection(_Connection):
+
+    def search(self, search_base, search_filter, *args, **kwargs):
+        if isinstance(search_filter, OperatorAttrDef):
+            search_filter = search_filter.compiled_filter()
+        return _Connection.search(self, search_base, search_filter, *args,
+                                  **kwargs)
 
 
 def create_connection(url, connconfig, auto_bind=True):

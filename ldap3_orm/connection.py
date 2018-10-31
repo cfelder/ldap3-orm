@@ -10,7 +10,7 @@ connection singleton please import directly from `_connection`.
 
 from ldap3_orm.config import config
 # pylint: disable=unused-import
-from ldap3_orm._connection import connection, create_connection
+from ldap3_orm._connection import Connection, connection, create_connection
 # pylint: disable=unused-import
 # pylint: disable=protected-access
 # noinspection PyProtectedMember
