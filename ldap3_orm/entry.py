@@ -5,6 +5,7 @@ from ldap3 import SEQUENCE_TYPES
 from ldap3 import Entry as _Entry
 from ldap3.abstract import STATUS_WRITABLE as _STATUS_WRITEABLE
 from ldap3.abstract.entry import EntryState as _EntryState
+from ldap3.core.exceptions import LDAPCursorError
 from ldap3.utils.ciDict import CaseInsensitiveWithAliasDict
 from ldap3.utils.dn import safe_dn
 
@@ -282,3 +283,17 @@ class EntryBase(_Entry):
             self._create_parameter(attrdef, value)
         else:  # AttrDef
             self._create_attribute(attrdef, value)
+
+    def __getattr__(self, item):
+        """Return the corresponding class attribute if the attribute on the
+        instance does not exist taking into account dynamic class attributes
+        provided in :py:class:`~ldap3_orm.entry.EntryMeta`s
+        :py:func:`__getattr__` implementation.
+
+        """
+        try:
+            attr = _Entry.__getattr__(self, item)
+        except (AttributeError, LDAPCursorError):
+            return getattr(self.__class__, item)
+        else:
+            return attr
