@@ -34,7 +34,7 @@ def add(conn, entry):
     """Adds a new ``entry`` to the connected LDAP.
 
     The ``entry`` is passed to the active
-    :py:class:`ldap3.Connection <ldap3.core.connection.Connection>`
+    :py:class:`ldap3_orm.Connection <ldap3.core.connection.Connection>`
     ``conn`` in order to create a new LDAP entry.
 
     """
@@ -47,7 +47,7 @@ def delete(conn, entry):
     """Deletes an ``entry`` from the connected LDAP.
 
     The ``entry`` is passed to the active
-    :py:class:`ldap3.Connection <ldap3.core.connection.Connection>`
+    :py:class:`ldap3_orm.Connection <ldap3.core.connection.Connection>`
     ``conn`` in order to delete an existing LDAP entry with the
     specified ``DN``.
 
@@ -60,13 +60,13 @@ def search(conn, *args, **kwargs):
     """Search the connected LDAP.
 
     Searches in the connected LDAP using the active
-    :py:class:`ldap3.Connection <ldap3.core.connection.Connection>`
+    :py:class:`ldap3_orm.Connection <ldap3.core.connection.Connection>`
     ``conn`` and the configured ``base_dn`` for ``search_base``.
     Further arguments are passed to
-    :py:func:`ldap3.Connection.search
+    :py:func:`ldap3_orm.Connection.search
     <ldap3.core.connection.Connection.search>` function.
 
-    See ``help(ldap3.Connection.search)`` for more details.
+    See ``help(ldap3_orm.Connection.search)`` for more details.
 
     """
     return conn.search(*args, **kwargs)

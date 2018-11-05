@@ -1,9 +1,11 @@
 # coding: utf-8
-
 # pylint: disable=unused-import
+
 from ldap3_orm.attribute import AttrDef
+from ldap3_orm._connection import Connection
 from ldap3_orm.entry import EntryBase
 from ldap3_orm.parameter import ParamDef
+from ldap3_orm.reader import Reader
 # pylint: disable=protected-access
 # pylint: disable=unused-import
 # noinspection PyProtectedMember

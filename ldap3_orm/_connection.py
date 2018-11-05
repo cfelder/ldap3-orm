@@ -36,10 +36,11 @@ class Connection(_Connection):
 
 
 def create_connection(url, connconfig, auto_bind=True):
-    """Create :py:class:`ldap3.Connection <ldap3.core.connection.Connection>`
-    from configuration. The ``auto_bind`` flag can either be set as keyword
-    argument or provided in the ``connconfig`` dictionary which has
-    preference in case both options are used.
+    """Create :py:class:`ldap3_orm.Connection
+    <ldap3.core.connection.Connection>` from configuration. The
+    ``auto_bind`` flag can either be set as keyword argument or provided in the
+    ``connconfig`` dictionary which has preference in case both options are
+    used.
 
     """
     if connconfig:
@@ -50,9 +51,9 @@ def create_connection(url, connconfig, auto_bind=True):
 
 
 def connection(conn, *add_args):
-    """Passes a :py:class:`~ldap3.core.connection.Connection` object to the
-    decorated function as first argument and further arguments passed to the
-    decorator.
+    """Passes a :py:class:`ldap3_orm.Connection
+    <ldap3.core.connection.Connection>` object to the decorated function as
+    first argument and further arguments passed to the decorator.
 
     """
     def decorator(func):

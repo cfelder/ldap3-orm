@@ -116,7 +116,7 @@ class config(object):
 
     connconfig = {}
     """Dictionary containing keyword arguments for
-    :py:class:`ldap3.Connection <ldap3.core.connection.Connection>`."""
+    :py:class:`ldap3_orm.Connection <ldap3.core.connection.Connection>`."""
 
     @classmethod
     def apply(cls, config=None):

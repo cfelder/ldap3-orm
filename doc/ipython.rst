@@ -44,7 +44,7 @@ for custom module implementations. For further information have a look at
 
 The configuration file above is an example for using ldap simple
 authentication. Different authentication mechanisms supported in
-:py:class:`ldap3.Connection <ldap3.core.connection.Connection>` can be
+:py:class:`ldap3_orm.Connection <ldap3_orm.connection.Connection>` can be
 configured providing the ``url`` entry and all relevant keyword arguments
 for its constructor using the ``connconfig`` dictionary, e.g.::
 
@@ -87,7 +87,7 @@ interactive shell:
    In [1]:
 
 Otherwise the shell provides an active
-:py:class:`ldap3.Connection <ldap3.core.connection.Connection>` which can be
+:py:class:`ldap3_orm.Connection <ldap3_orm.connection.Connection>` which can be
 accessed using ``conn`` and some convenience funtions which internally use the
 same connection, see below:
 
@@ -173,7 +173,7 @@ Delete entries from the connected LDAP:
    Out[8]: True
 
 or use any functionality provided in ``ipython`` or on the
-:py:class:`ldap3.Connection <ldap3.core.connection.Connection>` object ``conn``:
+:py:class:`ldap3_orm.Connection <ldap3_orm.connection.Connection>` object ``conn``:
 
 .. code-block:: ipython
 
@@ -183,7 +183,7 @@ or use any functionality provided in ``ipython`` or on the
    Adds a new ``entry`` to the connected LDAP.
 
    The ``entry`` is passed to the active
-   :py:class:`ldap3.Connection <ldap3.core.connection.Connection>`
+   :py:class:`ldap3_orm.Connection <ldap3_orm.connection.Connection>`
    ``conn`` in order to create a new LDAP entry.
    File:      /.../ldap3-orm/ldap3_orm/main.py
    Type:      function
@@ -230,7 +230,7 @@ Extending ldap3-ipython
 
 In addition to ORM models provided in python modules passed to `ldap3-ipython`
 new functions using the active
-:py:class:`ldap3.Connection <ldap3.core.connection.Connection>` can be
+:py:class:`ldap3_orm.Connection <ldap3.core.connection.Connection>` can be
 implemented using the :py:func:`ldap3_orm.connection.connection` decorator.
 
 .. py:decorator:: ldap3_orm.connection.connection
@@ -291,7 +291,7 @@ Let's have a look at the import statement again::
   :ref:`command line <ipython_argparse>`.
 * ``connection`` is the decorator
 * ``conn`` holds the active
-  :py:class:`ldap3.Connection <ldap3.core.connection.Connection>` created
+  :py:class:`ldap3_orm.Connection <ldap3.core.connection.Connection>` created
   during startup of `ldap3-ipython`
 
 Let's have a look at the function signature::
@@ -299,7 +299,7 @@ Let's have a look at the function signature::
    @connection(conn, "ou=People," + config.base_dn)
    def nextuid(conn, uid_base_dn):
 
-* The active :py:class:`ldap3.Connection <ldap3.core.connection.Connection>`
+* The active :py:class:`ldap3_orm.Connection <ldap3.core.connection.Connection>`
   will be passed internally to ``nextuid()`` as first argument.
 * The search base ``"ou=People," + config.base_dn`` will be passed internally
   to the function as second argument.
@@ -312,8 +312,8 @@ Jupyter Kernel
 ldap3-orm can be used in `Jupyter <http://jupyter.org>`_ either by using the
 `IPython kernel <https://ipython.readthedocs.io/en/stable/install/kernel_install.html>`_
 or by using the ldap3-ipython kernel. The latter provides already an active
-:py:class:`ldap3.Connection <ldap3.core.connection.Connection>` which can be
-accessed using ``conn`` and some convenience functions just as well as the
+:py:class:`ldap3_orm.Connection <ldap3.core.connection.Connection>` which can
+be accessed using ``conn`` and some convenience functions just as well as the
 ldap3-orm interactive shell if configured properly without writing a single
 line of code.
 

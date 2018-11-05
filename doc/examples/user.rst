@@ -24,10 +24,10 @@ attribute of type :py:class:`~ldap3.abstract.attrDef.AttrDef`::
        userPassword: {SSHA}oKJYPtoC+8mPBn/f47cSK5xWJuap183E
 
 We can pass this object to an active
-:py:class:`ldap3.Connection <ldap3.core.connection.Connection>`
+:py:class:`ldap3_orm.Connection <ldap3.core.connection.Connection>`
 in order to create a new LDAP user entry::
 
-   >>> from ldap3 import Connection
+   >>> from ldap3_orm import Connection
    >>> with Connection("ldap://ldap.example.com", "cn=directory manager",
                        "secret", auto_bind=True) as conn:
            conn.add(u.entry_dn, u.object_classes,

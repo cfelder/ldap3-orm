@@ -13,8 +13,8 @@ API Reference
 
 .. module:: ldap3_orm
 
-.. autoclass :: ParamDef
+.. autoclass:: ParamDef
    :members:
 
-.. autoclass :: EntryBase
+.. autoclass:: EntryBase
    :members:
