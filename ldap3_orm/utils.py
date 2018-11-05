@@ -29,6 +29,7 @@ along with ldap3-orm. If not, see <http://www.gnu.org/licenses/>.
 
 """
 
+
 def execute(path_or_file, globals=None, locals=None, cls=io.FileIO):
     ns = locals or {}
     if isinstance(path_or_file, file_types):
@@ -43,6 +44,12 @@ def execute(path_or_file, globals=None, locals=None, cls=io.FileIO):
 
 
 def compile_filter(search_filter):
+    """Returns a compiled filter representation for
+    :py:class:`~ldap3_orm.attribute.OperatorAttrDef`
+
+    or the unmodified ``search_filter`` otherwise.
+
+    """
     if isinstance(search_filter, OperatorAttrDef):
         return search_filter.compiled_filter()
     return search_filter

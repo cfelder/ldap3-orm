@@ -115,13 +115,12 @@ class EntryBase(_Entry):
     ``username="guest"``. Ldap attributes can be accessed either by sequence,
     by assignment or as dictionary keys. Keys are not case sensitive.
 
-    Furthermore all class attributes of type
-    :py:class:`~ldap3.abstract.attrDef.AttrDef` will be destroyed after
-    creating the corresponding ldap attribute in order to avoid naming
-    conflicts, e.g. when the class attribute has the same name as the ldap
-    attribute definition in :py:class:`~ldap3.abstract.attrDef.AttrDef`.
-    Thus accessing ``User.username`` will raise
-    :py:exc:`~exceptions.AttributeError`.
+    If the class attribute has the same name as the ldap attribute the latter
+    will be resolved when accessing the attribute on an instance whereas the
+    class attribute will be resolved when accessed on the class. Furthermore
+    all class attributes of type :py:class:`~ldap3.abstract.attrDef.AttrDef`
+    will be promoted to :py:class:`~ldap3_orm.attribute.OperatorAttrDef` in
+    order to support filter expressions.
 
     For more information about ldap attribute access, inherited methods, etc.
     have a look at :py:class:`~ldap3.abstract.entry.Entry`.
@@ -158,12 +157,12 @@ class EntryBase(_Entry):
 
 
         class User(EntryBase):
-            dn = "cn={uid},{base_dn}"
+            dn = "uid={uid},{base_dn}"
             base_dn = "ou=People,dc=example,dc=com"
             username = AttrDef("uid", validate=validateuser)
 
         >>> User(username="guest")
-        DN: cn=guest,ou=People,dc=example,dc=com
+        DN: uid=guest,ou=People,dc=example,dc=com
             uid: guest
 
     The distinguished name ``DN`` in this example has been initialized with

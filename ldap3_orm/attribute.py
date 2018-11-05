@@ -33,6 +33,17 @@ along with ldap3-orm. If not, see <http://www.gnu.org/licenses/>.
 
 
 def generative(func):
+    """Mark a method as generative.
+
+    Generative methods must implement a :py:method:`_clone()` method which
+    creates a copy of ``self`` which is internally passed to the
+    decorated method to ensure the calling object is not modified.
+
+    The generative method should modify the newly created object ``self``
+    which is automatically returned at the end of this method. This allows
+    daisy chaining generative method calls.
+
+    """
     def new_func(*args, **kwargs):
         self = args[0]._clone()
         func(self, *args[1:], **kwargs)
@@ -43,6 +54,7 @@ def generative(func):
 
 
 def compiled_filter(func):
+    """Passes a compiled and escaped filter to the decorated method."""
     def new_func(self, other, *args, **kwargs):
         if isinstance(other, OperatorAttrDef):
             other = other.compiled_filter()
@@ -55,6 +67,14 @@ def compiled_filter(func):
 
 
 class OperatorAttrDef(AttrDef):
+    """Define operators for :py:class:`~ldap3.abstract.attrDef.AttrDef`
+    expressions.
+
+    Class attributes of type :py:class:`~ldap3.abstract.attrDef.AttrDef`
+    specified on ORM models derived from :py:class`~ldap3_orm.entry.EntryBase`
+    will automatically be promoted to this class.
+
+    """
 
     _filter = ""
 
