@@ -125,6 +125,9 @@ class EntryBase(_Entry):
     For more information about ldap attribute access, inherited methods, etc.
     have a look at :py:class:`~ldap3.abstract.entry.Entry`.
 
+    For more information about filter expressions have a look at
+    :ref:`entry-orm_filter`.
+
     Validation of ldap attributes can be configured by passing
     validate = *callable* to :py:class:`~ldap3.abstract.attrDef.AttrDef`
     where *callable* must accept two arguments, the attribute key and the
