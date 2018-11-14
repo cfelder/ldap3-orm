@@ -62,6 +62,17 @@ using the following command::
    In [2]: add(u)
    Out[2]: True
 
+or for searching the directory simply using Python operators:
+
+.. code-block:: ipython
+
+   In [3]: search((User.surname == "User") & (User.givenname == "Guest"))
+   Out[3]: True
+
+   In [4]: conn.entries
+   Out[4]: [DN: uid=guest,ou=People,dc=example,dc=com - STATUS: Read - READ
+            TIME: 2018-03-15T14:32:00.369434]
+
 The same code can be used in `Jupyter <http://jupyter.org>`_ when using the
 integrated :ref:`ldap3-ipython kernel <ipython_jupyter_kernel>` which provides
 the same functionality as the ldap3-orm shell mentioned above.

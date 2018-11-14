@@ -135,25 +135,36 @@ Search for LDAP entries using:
 
 .. code-block:: ipython
 
-   In [3]: search("(uid=guest)")
+   In [3]: search(User.username == "guest")
    Out[3]: True
 
    In [4]: conn.entries
    Out[4]: [DN: uid=guest,ou=People,dc=example,dc=com - STATUS: Read - READ
             TIME: 2018-03-15T14:32:00.369434]
 
+or using the standard LDAP filter syntax defined in RFC 4515:
+
+.. code-block:: ipython
+
+   In [4]: search("(uid=guest)")
+   Out[4]: True
+
+   In [5]: conn.entries
+   Out[5]: [DN: uid=guest,ou=People,dc=example,dc=com - STATUS: Read - READ
+            TIME: 2018-03-15T14:32:00.369434]
+
 Use further attributes on searches:
 
 .. code-block:: ipython
 
-   In [5]: from ldap3 import ALL_ATTRIBUTES
+   In [6]: from ldap3 import ALL_ATTRIBUTES
 
-   In [6]: search('(uid=felder)', attributes=ALL_ATTRIBUTES)
-   Out[6]: True
+   In [7]: search(User.username == "guest", attributes=ALL_ATTRIBUTES)
+   Out[7]: True
 
-   In [7]: conn.entries
-   Out[7]:
-   [DN: uid=felder,ou=People,dc=example,dc=com - STATUS: Read - READ
+   In [8]: conn.entries
+   Out[8]:
+   [DN: uid=guest,ou=People,dc=example,dc=com - STATUS: Read - READ
     TIME: 2018-03-15T14:35:57.747751
         cn: Guest User
         givenName: Guest
@@ -169,15 +180,15 @@ Delete entries from the connected LDAP:
 
 .. code-block:: ipython
 
-   In [8]: delete(u)
-   Out[8]: True
+   In [9]: delete(u)
+   Out[9]: True
 
 or use any functionality provided in ``ipython`` or on the
 :py:class:`ldap3_orm.Connection <ldap3_orm.connection.Connection>` object ``conn``:
 
 .. code-block:: ipython
 
-   In [9]: ?add
+   In [10]: ?add
    Signature: add(entry)
    Docstring:
    Adds a new ``entry`` to the connected LDAP.
@@ -188,10 +199,10 @@ or use any functionality provided in ``ipython`` or on the
    File:      /.../ldap3-orm/ldap3_orm/main.py
    Type:      function
 
-   In [10]: conn.search(base_dn, '(uid=guest)')
-   Out[10]: True
+   In [11]: conn.search(base_dn, '(uid=guest)')
+   Out[11]: True
 
-   In [11]: conn.entries
+   In [12]: conn.entries
    Out[12]: [DN: uid=guest,ou=People,dc=example,dc=com - STATUS: Read - READ
              TIME: 2018-03-15T14:32:00.369434]
 
