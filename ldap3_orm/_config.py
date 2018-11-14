@@ -134,6 +134,12 @@ class config(object):
             getattr(cls, attr)  # raises attribute error if attr not exists
             setattr(cls, attr, value)
 
+        # expand paths for the following class attributes
+        for attr in ["modules", "pythonpaths"]:
+            attribute = getattr(cls, attr)
+            if attribute:
+                setattr(cls, attr, [path.expanduser(path.expandvars(p))
+                                    for p in attribute])
         cls._applied = True
 
 

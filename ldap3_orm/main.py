@@ -183,11 +183,14 @@ def main(argv):
     else:
         print("Connection object 'conn' has not been created.", file=sys.stderr)
         print("- Insufficient connection parameters -", file=sys.stderr)
-    # update local namespace `ns` with cli arguments
+    # update local namespace `ns` with cli arguments and include all `locals()`
     ns = dict(locals())
-    modules = ns_args.__dict__.pop("modules", []) or []
-    pythonpaths = ns_args.__dict__.pop("pythonpaths", []) or []
+    modules = config.modules or []
+    pythonpaths = config.pythonpaths or []
     kernelconn = ns_args.__dict__.pop('f', None)
+    # do not include the following cli args in local namespace `ns`
+    del ns_args.__dict__["modules"]
+    del ns_args.__dict__["pythonpaths"]
     ns.update(ns_args.__dict__)
     del ns["ns_args"]  # remove temporary namespace variable
     docs = [name + '\t-> ' + cls_or_func.__doc__.split('\n')[0]
