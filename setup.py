@@ -88,6 +88,16 @@ kernel_json = {
 }
 
 
+requirements_ipython = ["ipython"]
+requirements_jupyter = requirements_ipython + [
+    "jupyter_core>=4.4.0", "jupyter_client>=5.1.0", "ipykernel>=4.6.1",
+    "notebook>=5.2.2",
+]
+requirements_all = sorted(set(
+    requirements_ipython + requirements_jupyter
+))
+
+
 with open("README.rst", 'r') as fd:
     long_description = fd.read()
 
@@ -179,7 +189,12 @@ setup(cmdclass={
       scripts=find_scripts(),
       packages=find_packages(exclude=["test", "test.*"]),
       include_package_data=True,
-      requires=["ldap3", "six"],
+      install_requires=["ldap3", "six"],
+      extras_require=dict(
+          all=requirements_all,
+          ipython=requirements_ipython,
+          jupyter=requirements_jupyter,
+      ),
       classifiers=[
           "Development Status :: 3 - Alpha",
           "Intended Audience :: Developers",
