@@ -47,9 +47,16 @@ Package download is available at https://pypi.python.org/pypi/ldap3-orm.
 Install
 -------
 
-ldap-orm can be installed from the Python Package Index using ``pip`` ::
+ldap-orm can be installed from the Python Package Index using ``pip`` or
+``pip3``. ::
 
-   $ pip install ldap3-orm
+   $ pip3 install ldap3-orm
+
+This will install ldap3-orm and its minimal requirements necessary for
+importing the package and using it in your own projects. For installing
+ldap3-orm with all possible requirements the following command can be used. ::
+
+   $ pip3 install ldap3-orm[all]
 
 
 Git repository

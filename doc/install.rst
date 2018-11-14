@@ -10,19 +10,35 @@ https://pypi.python.org/pypi/ldap3-orm.
 Install from PyPI
 -----------------
 
-ldap-orm can be installed from the Python Package Index using ``pip`` ::
+ldap3-orm can be installed from the Python Package Index using ``pip`` or
+``pip3``. ::
 
-   $ pip install ldap3-orm
+   $ pip3 install ldap3-orm
 
-``pip`` will cope with package dependencies. Thus there is no need to install
-requirements on your own as described below for source code installations.
+This will install ldap3-orm and its minimal requirements necessary for
+importing the package and using it in your own projects. For installing
+ldap3-orm with all possible requirements the following command can be used. ::
+
+   $ pip3 install ldap3-orm[all]
+
+For fine grained requirement installations the following commands may be
+used::
+
+   $ pip3 install ldap3-orm[ipython]
+
+   $ pip3 install ldap3-orm[jupyter]
+
+
+``pip``/``pip3`` will cope with package dependencies. Thus there is no need
+to install requirements on your own as described below for source code
+installations.
 
 Git repository and code review
 ------------------------------
 
 ldap3-orm is maintained in a git repository hosted at
 `github <https://github.com/cfelder/ldap3-orm>`_.
-In order to checkout a working copy use the following command. ::
+In order to checkout a working copy use the following command::
 
   git clone https://github.com/cfelder/ldap3-orm.git
 
@@ -41,9 +57,9 @@ Install requirements using pip
 ------------------------------
 
 You can install the requirements using ``pip``, especially into
-your *virtual environment* ::
+your *virtual environment*. ::
 
-  $ pip install -r requirements.txt
+  $ pip3 install -r requirements.txt
 
 Depending on your setup you need to install further requirements listed below.
 
