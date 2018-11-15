@@ -44,7 +44,7 @@ for custom module implementations. For further information have a look at
 
 The configuration file above is an example for using ldap simple
 authentication. Different authentication mechanisms supported in
-:py:class:`ldap3_orm.Connection <ldap3_orm.connection.Connection>` can be
+:py:class:`ldap3_orm.Connection <ldap3.core.connection.Connection>` can be
 configured providing the ``url`` entry and all relevant keyword arguments
 for its constructor using the ``connconfig`` dictionary, e.g.::
 
@@ -87,7 +87,7 @@ interactive shell:
    In [1]:
 
 Otherwise the shell provides an active
-:py:class:`ldap3_orm.Connection <ldap3_orm.connection.Connection>` which can be
+:py:class:`ldap3_orm.Connection <ldap3.core.connection.Connection>` which can be
 accessed using ``conn`` and some convenience funtions which internally use the
 same connection, see below:
 
@@ -184,7 +184,7 @@ Delete entries from the connected LDAP:
    Out[9]: True
 
 or use any functionality provided in ``ipython`` or on the
-:py:class:`ldap3_orm.Connection <ldap3_orm.connection.Connection>` object ``conn``:
+:py:class:`ldap3_orm.Connection <ldap3.core.connection.Connection>` object ``conn``:
 
 .. code-block:: ipython
 
@@ -194,7 +194,7 @@ or use any functionality provided in ``ipython`` or on the
    Adds a new ``entry`` to the connected LDAP.
 
    The ``entry`` is passed to the active
-   :py:class:`ldap3_orm.Connection <ldap3_orm.connection.Connection>`
+   :py:class:`ldap3_orm.Connection <ldap3.core.connection.Connection>`
    ``conn`` in order to create a new LDAP entry.
    File:      /.../ldap3-orm/ldap3_orm/main.py
    Type:      function
