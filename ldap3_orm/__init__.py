@@ -1,6 +1,7 @@
 # coding: utf-8
 # pylint: disable=unused-import
 
+from ldap3.abstract.objectDef import ObjectDef
 from ldap3_orm.attribute import ALL_ATTRIBUTES, AttrDef
 from ldap3_orm._connection import Connection
 from ldap3_orm.entry import EntryBase
