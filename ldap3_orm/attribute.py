@@ -2,6 +2,8 @@
 
 from os import linesep
 
+# pylint: disable=unused-import
+from ldap3 import ALL_ATTRIBUTES
 from ldap3.abstract.attrDef import AttrDef
 from ldap3.utils.conv import escape_filter_chars
 from ldap3_orm.pycompat import string_types
