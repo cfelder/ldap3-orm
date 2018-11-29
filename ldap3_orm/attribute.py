@@ -140,6 +140,12 @@ class OperatorAttrDef(AttrDef):
             return r + rfilt
         return AttrDef.__repr__(self)
 
+    @classmethod
+    def create_from_AttrDef(cls, attrdef):
+        o = OperatorAttrDef.__new__(OperatorAttrDef)
+        o.__dict__ = attrdef.__dict__.copy()
+        return o
+
     def _clone(self):
         o = self.__class__.__new__(self.__class__)
         o.__dict__ = self.__dict__.copy()

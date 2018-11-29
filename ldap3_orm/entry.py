@@ -77,9 +77,7 @@ class EntryMeta(type):
         if "_attrdefs" in cls.__dict__:
             if key in cls._attrdefs:
                 # create OperatorAttrDef instance from AttrDef instance
-                o = OperatorAttrDef.__new__(OperatorAttrDef)
-                o.__dict__ = cls._attrdefs[key].__dict__.copy()
-                return o
+                return OperatorAttrDef.create_from_AttrDef(cls._attrdefs[key])
         raise AttributeError("\'%s\' has no attribute \'%s\'" % (cls.__name__,
                                                                  key))
 
