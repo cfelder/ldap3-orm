@@ -278,6 +278,8 @@ class EntryBase(_Entry):
                                 "and value '%s'" % (attribute.key,
                                                     attribute.value))
         state_parameters_or_attributes[attribute.key] = attribute
+        state_parameters_or_attributes.set_alias(attribute.key,
+                                                 attrdef.other_names or [])
 
     def _create_attribute(self, attrdef, value):
         # add Attributes to the schema definition self._state.attributes
