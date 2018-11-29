@@ -1,14 +1,10 @@
 # coding: utf-8
-# pylint: disable=unused-import
 
-from ldap3_orm.attribute import ALL_ATTRIBUTES, AttrDef
-from ldap3_orm._connection import Connection
-from ldap3_orm.entry import EntryBase
-from ldap3_orm.objectDef import ObjectDef
-from ldap3_orm.parameter import ParamDef
-from ldap3_orm.reader import Reader
-# pylint: disable=protected-access
+from ldap3 import AttrDef as _AttrDef
+from ldap3 import ObjectDef as _ObjectDef
+from ldap3_orm.attribute import OperatorAttrDef
 # pylint: disable=unused-import
+# pylint: disable=protected-access
 # noinspection PyProtectedMember
 from ldap3_orm._version import __version__, __revision__
 
@@ -32,3 +28,13 @@ You should have received a copy of the GNU Lesser General Public License
 along with ldap3-orm. If not, see <http://www.gnu.org/licenses/>.
 
 """
+
+
+class ObjectDef(_ObjectDef):
+
+    def __getattr__(self, item):
+        attr = _ObjectDef.__getattr__(self, item)
+        # intentionally use ldap3 AttrDef on type checking here
+        if isinstance(attr, _AttrDef):
+            return OperatorAttrDef.create_from_AttrDef(attr)
+        return attr
