@@ -35,7 +35,7 @@ class ParamDef(AttrDef):
     This class provides a parameter definition which can be used in addition to
     attributes defined using :py:class:`~ldap3.abstract.attrDef.AttrDef`. The
     parameter definition is used in the same way as for
-    :py:class:`~ldap3.abstract.attrDef.AttrDef` except that they are not added
+    :py:class:`~ldap3.abstract.attrDef.AttrDef` except that it is not added
     the schema.
 
     """

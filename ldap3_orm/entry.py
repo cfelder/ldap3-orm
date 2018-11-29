@@ -115,6 +115,11 @@ class EntryBase(_Entry):
     ``username="guest"``. Ldap attributes can be accessed either by sequence,
     by assignment or as dictionary keys. Keys are not case sensitive.
 
+    Ldap attributes are declared mandatory in
+    :py:class:`~ldap3.abstract.attrDef.AttrDef` by default. This can be changed
+    either providing a reasonable default value using the ``default`` keyword
+    argument or setting ``mandatory=False``.
+
     If the class attribute has the same name as the ldap attribute the latter
     will be resolved when accessing the attribute on an instance whereas the
     class attribute will be resolved when accessed on the class. Furthermore
@@ -233,8 +238,10 @@ class EntryBase(_Entry):
             if attrdefs[key].default != NotImplemented:
                 attrdef = attrdefs.pop(key)
                 self._create_attribute_or_parameter(attrdef, attrdef.default)
-        # all remaining attributes have no reasonable default value
-        # (NotImplemented) and should have been set earlier
+            elif not attrdefs[key].mandatory:
+                del attrdefs[key]
+        # all remaining attributes are mandatory, do not provide a reasonable
+        # default value (NotImplemented) and should have been set earlier
         if attrdefs:
             s = " '" if len(attrdefs) == 1 else "s '"
             raise TypeError("__init__() missing the following keyword "

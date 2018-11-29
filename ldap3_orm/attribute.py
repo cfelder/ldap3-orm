@@ -4,7 +4,7 @@ from os import linesep
 
 # pylint: disable=unused-import
 from ldap3 import ALL_ATTRIBUTES
-from ldap3.abstract.attrDef import AttrDef
+from ldap3.abstract.attrDef import AttrDef as _AttrDef
 from ldap3.utils.conv import escape_filter_chars
 from ldap3_orm.pycompat import string_types
 # pylint: disable=unused-import
@@ -66,6 +66,13 @@ def compiled_filter(func):
     new_func.__name__ = func.__name__
     new_func.__doc__ = func.__doc__
     return new_func
+
+
+class AttrDef(_AttrDef):
+
+    def __init__(self, *args, **kwargs):
+        mandatory = kwargs.pop("mandatory", True)
+        _AttrDef.__init__(self, *args, mandatory=mandatory, **kwargs)
 
 
 class OperatorAttrDef(AttrDef):
