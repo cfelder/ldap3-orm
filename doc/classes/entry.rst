@@ -19,6 +19,10 @@ ORM Modelling
 .. autoclass:: EntryBase
    :members:
 
+Automatic ORM Model Creation
+============================
+
+.. autoclass:: EntryType
 
 .. _entry-orm_filter:
 

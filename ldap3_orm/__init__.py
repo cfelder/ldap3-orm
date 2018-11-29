@@ -3,7 +3,7 @@
 
 from ldap3_orm.attribute import ALL_ATTRIBUTES, AttrDef
 from ldap3_orm._connection import Connection
-from ldap3_orm.entry import EntryBase
+from ldap3_orm.entry import EntryBase, EntryType
 from ldap3_orm.objectDef import ObjectDef
 from ldap3_orm.parameter import ParamDef
 from ldap3_orm.reader import Reader

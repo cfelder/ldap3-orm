@@ -10,6 +10,7 @@ from ldap3.utils.ciDict import CaseInsensitiveWithAliasDict
 from ldap3.utils.dn import safe_dn
 
 from ldap3_orm.attribute import AttrDef, OperatorAttrDef
+from ldap3_orm.objectDef import ObjectDef
 from ldap3_orm.pycompat import add_metaclass, iteritems
 from ldap3_orm.parameter import Parameter, ParamDef
 # pylint: disable=unused-import
@@ -306,3 +307,80 @@ class EntryBase(_Entry):
             return getattr(self.__class__, item)
         else:
             return attr
+
+
+class EntryType(object):
+    """Factory for creating ORM models from given object classes.
+
+    *Creating ORM models automatically*
+
+    Instances of :py:class:`~ldap3_orm.entry.EntryType` describe new classes
+    derived from :py:class:`~ldap3_orm.entry.EntryBase` using the following
+    arguments passed to the constructor:
+
+        - dn -- distinguished name, an unique identifier in your ldap tree
+            This attribute can be defined as a template using python's built-in
+            :py:func:`format` function. All dynamically generated attribute
+            definitions from the given ``schema`` and the ``object_classes``
+            provided here will be expanded.
+        - object_classes -- one or multiple object class(es) which should be
+            included in the generated model.
+        - schema --
+            :py:class:`ldap3_orm.Connection <ldap3.core.connection.Connection>`,
+            :py:class:`~ldap3.core.server.Server` or
+            :py:class:`~ldap3.procotol.rfc4512.SchemaInfo` which will be used
+            to generate the model from the corresponding schema information.
+
+    Furthermore all arguments which can be passed either as a positional
+    argument or as keyword argument to
+    :py:class:`~ldap3.abstract.objectDef.ObjectDef` can be passed to this
+    constructor.
+
+    *Example*::
+
+        InetUser = EntryType("uid={uid},ou=People," + config.base_dn,
+                             "inetUser", conn)
+
+        >>> InetUser
+        OBJ : inetUser
+        AUX : <None>
+        OID: inetUser (Auxiliary) 2.16.840.1.113730.3.2.130, top (Abstract) 2.5.6.0
+        MUST: objectClass
+        MAY : inetUserHttpURL, inetUserStatus, memberOf, uid, userPassword
+
+        >>> u = InetUser(uid="guest",
+                         userPassword="{SSHA}oKJYPtoC+8mPBn/f47cSK5xWJuap183E")
+        >>> u
+        DN: uid=guest,ou=People,dc=example,dc=com
+            objectClass: inetUser
+            uid: guest
+            userPassword: {SSHA}oKJYPtoC+8mPBn/f47cSK5xWJuap183E
+
+    """
+
+    def __init__(self, dn, object_classes, schema=None, *args, **kwargs):
+        self._dn = dn
+        self._object_classes = object_classes
+        self._objDef = ObjectDef(object_classes, schema, *args, **kwargs)
+
+    def __call__(self, **kwargs):
+        entry = EntryBase.__new__(EntryBase)
+        entry.__dict__["_attrdefs"] = self._objDef._attributes
+        entry.__dict__["dn"] = self._dn
+        if "objectClass" in entry._attrdefs and "objectClass" not in kwargs:
+            kwargs = dict(objectClass=self._object_classes, **kwargs)
+        entry.__init__(**kwargs)
+        return entry
+
+    def __getattr__(self, item):
+        if "_objDef" in self.__dict__:
+            if item in self._objDef:
+                return getattr(self._objDef, item)
+        raise AttributeError("\'%s\' object has no attribute \'%s\'" % (
+            self.__class__.__name__, item))
+
+    def __repr__(self):
+        return repr(self._objDef)
+
+    def __str__(self):
+        return self.__repr__()
