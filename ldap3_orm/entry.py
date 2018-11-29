@@ -133,9 +133,9 @@ class EntryBase(_Entry):
 
     Validation of ldap attributes can be configured by passing
     validate = *callable* to :py:class:`~ldap3.abstract.attrDef.AttrDef`
-    where *callable* must accept two arguments, the attribute key and the
-    value which should be assigned to the attribute. The *callable* must
-    return a boolean allowing or denying the validation or raise an exception.
+    where *callable* must accept the value which should be assigned to the
+    attribute as argument. The *callable* must return a boolean allowing or
+    denying the validation or raise an exception.
 
     *Attributes*
 
@@ -159,7 +159,7 @@ class EntryBase(_Entry):
 
     *Example*::
 
-        validateuser = lambda _, value: value.isalpha()
+        validateuser = lambda value: value.isalpha()
 
 
         class User(EntryBase):
@@ -269,9 +269,9 @@ class EntryBase(_Entry):
         attribute.__dict__["values"] = tolist(value)
         # check for validator
         if attrdef.validate:
-            # call validator with attribute key and the corresponding value
-            # which should be assigned to the attribute.
-            if not attrdef.validate(attribute.key, attribute.value):
+            # call validator with the value which should be assigned to the
+            # attribute.
+            if not attrdef.validate(attribute.value):
                 raise TypeError("Validation failed for attribute '%s' "
                                 "and value '%s'" % (attribute.key,
                                                     attribute.value))
