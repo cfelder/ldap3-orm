@@ -1,7 +1,7 @@
 # coding: utf-8
 
-from ldap3 import AttrDef as _AttrDef
-from ldap3 import ObjectDef as _ObjectDef
+from ldap3.abstract.attrDef import AttrDef as _AttrDef
+from ldap3.abstract.objectDef import ObjectDef as _ObjectDef
 from ldap3_orm.attribute import OperatorAttrDef
 # pylint: disable=unused-import
 # pylint: disable=protected-access
