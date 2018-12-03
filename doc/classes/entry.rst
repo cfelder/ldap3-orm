@@ -98,6 +98,26 @@ We can use :py:class:`ldap3_orm.Reader <ldap3.abstract.cursor.Reader>` objects.
    DN: uid=guest,ou=People,dc=example,dc=com - STATUS: Read - READ TIME:
    2018-03-15T14:32:00.369434
 
+Instead of creating our own models we can dynamically create a model from
+our active connection using either
+:py:class:`ldap3_orm.ObjectDef <ldap3.abstract.objectDef.ObjectDef>`
+
+   >>> odef = ObjectDef("inetUser", conn)
+   >>> odef
+   OBJ : inetUser
+   AUX : <None>
+   OID: inetUser (Auxiliary) 2.16.840.1.113730.3.2.130, top (Abstract) 2.5.6.0
+   MUST: objectClass
+   MAY : inetUserHttpURL, inetUserStatus, memberOf, uid, userPassword
+   >>> print(odef.uid == "guest")
+   '(uid=guest)'
+
+or a class generated from the :py:class:`~ldap3_orm.entry.EntryType` factory.
+
+   >>> InetUser = EntryType("uid={uid},ou=People," + config.base_dn,
+                            "inetUser", conn)
+   >>> print(InetUser.uid == "guest")
+   '(uid=guest)'
 
 Operators
 ---------
