@@ -127,6 +127,8 @@ def parse_args(argv):
     parent, parser = _create_parsers()
     # run parent parser to gather cliargs from the configuration file
     ns = parent.parse_known_args(argv[1:])[0]
+    # gather cliargs from cmdline for username and password overwrite
+    ns_cli = parser.parse_known_args(argv[1:])[0]
     configfile = path.join(CONFIGDIR, "default")
     if not ns.config and path.isfile(configfile):
         ns.config = configfile
@@ -151,8 +153,23 @@ def parse_args(argv):
         cfg = {}
     # parse arguments passed to function and from configuration file
     ns = parser.parse_args(argv[1:])
+    fullcfg = dict(ns.__dict__)
+    # handle overwrite of username and password arguments
+    if ns_cli.username:
+        if ns_cli.password is not None:
+            password = ns_cli.password
+        else:
+            password = getpass("Password for '%s':" % ns_cli.username)
+        if "connconfig" not in cfg:
+            cfg["connconfig"] = {}
+        cfg["connconfig"].update(user=ns_cli.username,
+                                 password=password)
+        # remove overwritten config
+        for k in ["username", "password"]:
+            fullcfg.pop(k, None)
+            cfg.pop(k, None)
     # update configuration with arguments from parser
-    cfg.update(ns.__dict__)
+    cfg.update(fullcfg)
     for key in ignored_args_in_config:
         cfg.pop(key, None)
     # pass configuration to `ldap3_orm.config.config` object
@@ -164,13 +181,6 @@ def parse_args(argv):
 def main(argv):
     ns_args = parse_args(argv)
     if ns_args.url:
-        if ns_args.username:
-            if ns_args.password is not None:
-                password = ns_args.password
-            else:
-                password = getpass("Password for '%s':" % ns_args.username)
-            config.connconfig.update(user=ns_args.username,
-                                     password=password)
         # add conn to locals() in order to populate the new namespace
         # pylint: disable=unused-import
         from ldap3_orm.connection import conn

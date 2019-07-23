@@ -140,6 +140,21 @@ class config(object):
             if attribute:
                 setattr(cls, attr, [path.expanduser(path.expandvars(p))
                                     for p in attribute])
+
+        # update connconfig with username and password settings
+        if cls.username:
+            if "user" in cls.connconfig:
+                raise ConfigurationError("Ambiguous configuration settings "
+                                         "detected. 'connconfig[\"user\"]' and "
+                                         "'username' must be used exclusively.")
+            cls.connconfig["user"] = cls.username
+        if cls.password:
+            if "password" in cls.connconfig:
+                raise ConfigurationError("Ambiguous configuration settings "
+                                         "detected. 'connconfig[\"password\"]' "
+                                         "and 'password' must be used "
+                                         "exclusively.")
+            cls.connconfig["password"] = cls.password
         cls._applied = True
 
 
