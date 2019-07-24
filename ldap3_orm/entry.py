@@ -46,6 +46,14 @@ class EntryState(_EntryState):
         _EntryState.__init__(self, *args, **kwargs)
         self.parameters = CaseInsensitiveWithAliasDict()
 
+    @property
+    def defintion(self):
+        return self.cursor.definition
+
+    @defintion.setter
+    def definition(self, object_def):
+        self.cursor.definition = object_def
+
 
 class EntryMeta(type):
 
@@ -216,12 +224,13 @@ class EntryBase(_Entry):
 
     def __init__(self, **kwargs):
         class _DummyCursor(object):  # needed for _EntryState
-            definition = None
+            def __init__(self, object_def):
+                self.definition = object_def
 
         if self.dn is None:
             raise NotImplementedError("%s must set the 'dn' attribute"
                                       % self.__class__)
-        cursor = _DummyCursor()
+        cursor = _DummyCursor(ObjectDef(self.object_classes))
         self.__dict__["_state"] = EntryState(None, cursor)
         # initialize attributes from kwargs
         attrdefs = dict(self._attrdefs)
@@ -238,7 +247,8 @@ class EntryBase(_Entry):
                 attrdef = attrdefs.pop(key)
                 self._create_attribute_or_parameter(attrdef, attrdef.default)
             elif not attrdefs[key].mandatory:
-                del attrdefs[key]
+                # delete non mandatory attrdef and add to definition
+                self._state.definition += attrdefs.pop(key)
         # all remaining attributes are mandatory, do not provide a reasonable
         # default value (NotImplemented) and should have been set earlier
         if attrdefs:
@@ -283,6 +293,7 @@ class EntryBase(_Entry):
     def _create_attribute(self, attrdef, value):
         # add Attributes to the schema definition self._state.attributes
         self._create(attrdef, value, Attribute, self._state.attributes)
+        self._state.definition += attrdef
 
     def _create_parameter(self, attrdef, value):
         # do not add Parameters to the schema
@@ -370,6 +381,8 @@ class EntryType(object):
         if "objectClass" in entry._attrdefs and "objectClass" not in kwargs:
             kwargs = dict(objectClass=self._object_classes, **kwargs)
         entry.__init__(**kwargs)
+        # overwrite auto generated objDef with more detailed one from the schema
+        entry._state.definition = self._objDef
         return entry
 
     def __getattr__(self, item):
