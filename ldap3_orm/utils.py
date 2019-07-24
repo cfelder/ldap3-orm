@@ -1,6 +1,7 @@
 # coding: utf-8
 
 import io
+from ldap3 import SEQUENCE_TYPES
 from ldap3_orm.attribute import OperatorAttrDef
 from ldap3_orm.pycompat import file_types
 # pylint: disable=unused-import
@@ -53,3 +54,7 @@ def compile_filter(search_filter):
     if isinstance(search_filter, OperatorAttrDef):
         return search_filter.compiled_filter()
     return search_filter
+
+
+def tolist(itm):
+    return itm if isinstance(itm, SEQUENCE_TYPES) else [itm]

@@ -1,7 +1,6 @@
 # coding: utf-8
 
 from ldap3 import Attribute
-from ldap3 import SEQUENCE_TYPES
 from ldap3 import Entry as _Entry
 from ldap3.abstract import STATUS_WRITABLE as _STATUS_WRITEABLE
 from ldap3.abstract.entry import EntryState as _EntryState
@@ -13,6 +12,7 @@ from ldap3_orm.attribute import AttrDef, OperatorAttrDef
 from ldap3_orm.objectDef import ObjectDef
 from ldap3_orm.pycompat import add_metaclass, iteritems
 from ldap3_orm.parameter import Parameter, ParamDef
+from ldap3_orm.utils import tolist
 # pylint: disable=unused-import
 # pylint: disable=protected-access
 # noinspection PyProtectedMember
@@ -273,9 +273,6 @@ class EntryBase(_Entry):
         self.__dict__["_state"] = state
 
     def _create(self, attrdef, value, cls, state_parameters_or_attributes):
-        def tolist(itm):
-            return itm if isinstance(itm, SEQUENCE_TYPES) else [itm]
-
         attribute = cls(attrdef, self, None)
         attribute.__dict__["values"] = tolist(value)
         # check for validator
