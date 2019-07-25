@@ -15,10 +15,11 @@ try:
 except ImportError:
     IPythonKernel = None
     IPKernelApp = None
+from ldap3 import SIMPLE
 from ldap3_orm._config import CONFIGDIR, ConfigurationError, \
     FallbackFileType, config, read_config
 from ldap3_orm.utils import execute
-from ldap3_orm.pycompat import callable, iteritems, reraise
+from ldap3_orm.pycompat import callable, input, iteritems, reraise
 # pylint: disable=unused-import
 # pylint: disable=protected-access
 # noinspection PyProtectedMember
@@ -181,9 +182,16 @@ def parse_args(argv):
 def main(argv):
     ns_args = parse_args(argv)
     if ns_args.url:
-        if ns_args.username and ns_args.password is None:
-            config.connconfig.update(password=getpass("Password for '%s':" %
-                                                      ns_args.username))
+        if "authentication" not in config.connconfig or config.connconfig[
+            "authentication"] == SIMPLE:
+            username = ''
+            if "user" not in config.connconfig:
+                username = input("User DN: ")
+                config.connconfig.update(user=username)
+            if "password" not in config.connconfig:
+                config.connconfig.update(
+                    password=getpass("Password for '%s': " %
+                                     username))
         # add conn to locals() in order to populate the new namespace
         # pylint: disable=unused-import
         from ldap3_orm.connection import conn

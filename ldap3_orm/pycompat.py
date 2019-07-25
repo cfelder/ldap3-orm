@@ -5,6 +5,8 @@ from six import PY2
 # pylint: disable=unused-import
 from six import add_metaclass, callable, iteritems, reraise, string_types
 # pylint: disable=unused-import
+from six.moves import input
+# pylint: disable=unused-import
 # pylint: disable=protected-access
 # noinspection PyProtectedMember
 from ldap3_orm._version import __version__, __revision__
