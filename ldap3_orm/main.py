@@ -181,6 +181,9 @@ def parse_args(argv):
 def main(argv):
     ns_args = parse_args(argv)
     if ns_args.url:
+        if ns_args.username and ns_args.password is None:
+            config.connconfig.update(password=getpass("Password for '%s':" %
+                                                      ns_args.username))
         # add conn to locals() in order to populate the new namespace
         # pylint: disable=unused-import
         from ldap3_orm.connection import conn
