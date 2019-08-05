@@ -182,14 +182,14 @@ def parse_args(argv):
 def main(argv):
     ns_args = parse_args(argv)
     if ns_args.url:
-        if "authentication" not in config.connconfig or config.connconfig[
-            "authentication"] == SIMPLE:
-            username = ''
-            if "user" not in config.connconfig:
+        username = config.connconfig.get("user")
+        authentication = config.connconfig.get("authentication")
+        if (username and not authentication) or authentication == SIMPLE:
+            if username is None:
                 username = input("User DN: ")
-                config.connconfig.update(user=username)
             if "password" not in config.connconfig:
                 config.connconfig.update(
+                    user=username,
                     password=getpass("Password for '%s': " %
                                      username))
         # add conn to locals() in order to populate the new namespace
