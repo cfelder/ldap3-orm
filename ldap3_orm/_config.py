@@ -2,6 +2,8 @@
 
 from os import getenv, path
 
+from keyring import get_password
+
 from ldap3_orm.pycompat import iteritems
 from ldap3_orm.utils import execute
 # pylint: disable=unused-import
@@ -155,8 +157,16 @@ class config(object):
                                          "and 'password' must be used "
                                          "exclusively.")
             cls.connconfig["password"] = cls.password
+        if callable(cls.connconfig["password"]):
+            cls.connconfig["password"] = cls.connconfig["password"](
+                cls.url, cls.connconfig["user"]
+            )
+            if cls.password:  # update cls.password as well
+                cls.password = cls.connconfig["password"]
         cls._applied = True
 
 
 def read_config(path=CONFIGFILE, cls=FallbackFileType('r')):
-    return execute(path, cls=cls)
+    return execute(path, cls=cls, globals=dict(
+        keyring = get_password,
+    ))
