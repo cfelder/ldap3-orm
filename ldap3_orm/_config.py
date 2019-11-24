@@ -2,7 +2,10 @@
 
 from os import getenv, path
 
-from keyring import get_password
+try:
+    import keyring
+except ImportError:
+    keyring = None
 
 from ldap3_orm.pycompat import iteritems
 from ldap3_orm.utils import execute
@@ -92,6 +95,10 @@ class config(object):
 
     """
     _applied = False  # apply only once
+    _passwordcls_or_module = None
+    # class or module must implement the following interfaces:
+    #   * ``get_password(url. username)``
+    #   * ``set_password(url, username, password)``
 
     # -- cli and configuration file arguments ----------------------------
     url = None
@@ -104,7 +111,8 @@ class config(object):
     """The account of the user to log in for simple bind"""
 
     password = None
-    """The password of the user for simple bind"""
+    """The password of the user for simple bind or ``keyring`` to use the
+    ``keyring`` module for safe password storage."""
 
     modules = None
     """Python modules to include into current namespace in ``ldap3-ipython``"""
@@ -118,7 +126,24 @@ class config(object):
 
     connconfig = {}
     """Dictionary containing keyword arguments for
-    :py:class:`ldap3_orm.Connection <ldap3.core.connection.Connection>`."""
+    :py:class:`ldap3_orm.Connection <ldap3.core.connection.Connection>`,
+    e.g.::
+
+        connconfig = dict(
+            user = "cn=Directory Manager",
+            password = "changeme",
+        )
+
+    which uses simple bind with a plain-text password stored in the
+    configuration file.
+
+    For safe password storage ldap3-orm supports ``keyring``, e.g.::
+
+        connconfig = dict(
+            user = "cn=Directory Manager",
+            password = keyring,
+        )
+    """
 
     @classmethod
     def apply(cls, config=None):
@@ -157,16 +182,33 @@ class config(object):
                                          "and 'password' must be used "
                                          "exclusively.")
             cls.connconfig["password"] = cls.password
-        if callable(cls.connconfig["password"]):
-            cls.connconfig["password"] = cls.connconfig["password"](
+        if "password" in cls.connconfig and hasattr(cls.connconfig["password"],
+                                                    "get_password"):
+            cls._passwordcls_or_module = cls.connconfig["password"]
+            cls.connconfig[
+                "password"] = cls._passwordcls_or_module.get_password(
                 cls.url, cls.connconfig["user"]
             )
             if cls.password:  # update cls.password as well
                 cls.password = cls.connconfig["password"]
         cls._applied = True
 
+    @classmethod
+    def set_password(cls, password):
+        if not cls._applied:
+            raise RuntimeError("apply must be called first.")
+
+        if hasattr(cls._passwordcls_or_module, "set_password"):
+            cls.connconfig[
+                "password"] = cls._passwordcls_or_module.set_password(
+                cls.url, cls.connconfig["user"], password
+            )
+        cls.connconfig["password"] = password
+        if cls.password:  # update cls.password as well
+            cls.password = cls.connconfig["password"]
+
 
 def read_config(path=CONFIGFILE, cls=FallbackFileType('r')):
     return execute(path, cls=cls, globals=dict(
-        keyring = get_password,
+        keyring = keyring,
     ))

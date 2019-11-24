@@ -156,6 +156,7 @@ def parse_args(argv):
     ns = parser.parse_args(argv[1:])
     fullcfg = dict(ns.__dict__)
     # handle overwrite of username and password arguments
+    password = None
     if ns_cli.username:
         if ns_cli.password is not None:
             password = ns_cli.password
@@ -163,8 +164,8 @@ def parse_args(argv):
             password = getpass("Password for '%s':" % ns_cli.username)
         if "connconfig" not in cfg:
             cfg["connconfig"] = {}
-        cfg["connconfig"].update(user=ns_cli.username,
-                                 password=password)
+        # update connconfig['password'] later using `config.set_password`
+        cfg["connconfig"].update(user=ns_cli.username)
         # remove overwritten config
         for k in ["username", "password"]:
             fullcfg.pop(k, None)
@@ -176,6 +177,12 @@ def parse_args(argv):
     # pass configuration to `ldap3_orm.config.config` object
     # this will raise an `ConfigurationError` on unknown arguments
     config.apply(cfg)
+    # update password
+    if password is None and "password" in config.connconfig and \
+            config.connconfig["password"] is None:
+        password = getpass("Password for '%s':" % config.connconfig["user"])
+    if password is not None:
+        config.set_password(password)
     return ns
 
 
@@ -188,10 +195,8 @@ def main(argv):
             if username is None:
                 username = input("User DN: ")
             if "password" not in config.connconfig:
-                config.connconfig.update(
-                    user=username,
-                    password=getpass("Password for '%s': " %
-                                     username))
+                config.connconfig.update(user=username)
+                config.set_password(getpass("Password for '%s': " % username))
         # add conn to locals() in order to populate the new namespace
         # pylint: disable=unused-import
         from ldap3_orm.connection import conn

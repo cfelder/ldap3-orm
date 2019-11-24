@@ -64,12 +64,13 @@ your *virtual environment*. ::
 Depending on your setup you need to install further requirements listed below.
 
 ============================= =================================================
-File                          Required for
+File or module                Required for
 ============================= =================================================
 ``requirements-bin.txt``      Running the ldap3-orm scripts/programs
 ``requirements-doc.txt``      Building the Documentation
 ``requirements-jupyter.txt``  Running the ldap3-ipython jupyter kernel
 ``requirements-tests.txt``    Running the test suite
+``keyring``                   keyring password backend configuration
 ============================= =================================================
 
 Install ldap3-orm from sources

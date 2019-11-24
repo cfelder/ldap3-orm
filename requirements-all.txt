@@ -3,3 +3,4 @@
 -r requirements-doc.txt
 -r requirements-jupyter.txt
 -r requirements-tests.txt
+keyring
