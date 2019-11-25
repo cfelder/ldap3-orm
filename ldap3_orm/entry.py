@@ -259,9 +259,6 @@ class EntryBase(_Entry):
                                       % self.__class__)
         cursor = _DummyCursor(ObjectDef(self.object_classes))
         self.__dict__["_state"] = EntryState(None, cursor)
-        # TODO: remove the following line once ldap3 pull request #718 is merged
-        if not hasattr(self._state, "entry_raw_attributes"):
-            self._state.entry_raw_attributes = CaseInsensitiveWithAliasDict()
         # initialize attributes from kwargs
         attrdefs = dict(self._attrdefs)
         for k, v in iteritems(kwargs):
@@ -321,9 +318,7 @@ class EntryBase(_Entry):
         # add Attributes to the schema definition self._state.attributes
         self._create(attrdef, value, Attribute, self._state.attributes)
         # add raw_attributes without processing
-        # TODO: refactor to self._entry.raw_attributes
-        #  once ldap3 pull request #718 is merged.
-        self._state.entry_raw_attributes[attrdef.key] = tolist(value)
+        self._state.raw_attributes[attrdef.key] = tolist(value)
         self._state.definition += attrdef
 
     def _create_parameter(self, attrdef, value):

@@ -189,7 +189,7 @@ setup(cmdclass={
       scripts=find_scripts(),
       packages=find_packages(exclude=["test", "test.*"]),
       include_package_data=True,
-      install_requires=["ldap3>=2.3", "six"],
+      install_requires=["ldap3>=2.6.1", "six"],
       extras_require=dict(
           all=requirements_all,
           ipython=requirements_ipython,
