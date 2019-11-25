@@ -16,6 +16,8 @@ except ImportError:
     IPythonKernel = None
     IPKernelApp = None
 from ldap3 import SIMPLE
+from ldap3.core.exceptions import LDAPBindError
+from ldap3.core.results import RESULT_INVALID_CREDENTIALS, RESULT_CODES
 from ldap3_orm._config import CONFIGDIR, ConfigurationError, \
     FallbackFileType, config, read_config
 from ldap3_orm.utils import execute
@@ -199,7 +201,16 @@ def main(argv):
                 config.set_password(getpass("Password for '%s': " % username))
         # add conn to locals() in order to populate the new namespace
         # pylint: disable=unused-import
-        from ldap3_orm.connection import conn
+        for i in range(2):  # max 2 retries on invalidCredentials
+            try:
+                from ldap3_orm.connection import conn
+            except LDAPBindError as e:
+                if RESULT_CODES[RESULT_INVALID_CREDENTIALS] not in str(e):
+                    break
+                print("Invalid credentials.", file=sys.stderr)
+                config.set_password(getpass("Password for '%s': " % username))
+            else:
+                break
         if config.base_dn:
             # pylint: disable=unused-import
             from ldap3_orm.basic import search
