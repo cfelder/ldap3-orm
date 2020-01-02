@@ -1,5 +1,7 @@
 # coding: utf-8
 
+from functools import partial
+
 from ldap3 import Connection as _Connection
 # pylint: disable=unused-import
 # pylint: disable=protected-access
@@ -57,12 +59,10 @@ def connection(conn, *add_args):
 
     """
     def decorator(func):
-        def new_func(*args, **kwargs):
-            new_args = add_args + args
-            if conn == NotImplemented:
-                return func(*new_args, **kwargs)
-            return func(conn, *new_args, **kwargs)
-        new_func.__name__ = func.__name__
+        if conn == NotImplemented:
+            new_func = partial(func, *add_args)
+        else:
+            new_func = partial(func, conn, *add_args)
         new_func.__doc__ = func.__doc__
         return new_func
     return decorator

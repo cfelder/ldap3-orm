@@ -1,6 +1,7 @@
 # coding: utf-8
 
 from os import linesep
+from functools import wraps
 
 # pylint: disable=unused-import
 from ldap3 import ALL_ATTRIBUTES
@@ -46,25 +47,23 @@ def generative(func):
     daisy chaining generative method calls.
 
     """
+    @wraps(func)
     def new_func(*args, **kwargs):
         self = args[0]._clone()
         func(self, *args[1:], **kwargs)
         return self
-    new_func.__name__ = func.__name__
-    new_func.__doc__ = func.__doc__
     return new_func
 
 
 def compiled_filter(func):
     """Passes a compiled and escaped filter to the decorated method."""
+    @wraps(func)
     def new_func(self, other, *args, **kwargs):
         if isinstance(other, OperatorAttrDef):
             other = other.compiled_filter()
         elif isinstance(other, string_types):
             other = escape_filter_chars(other)
         return func(self, other, *args, **kwargs)
-    new_func.__name__ = func.__name__
-    new_func.__doc__ = func.__doc__
     return new_func
 
 
