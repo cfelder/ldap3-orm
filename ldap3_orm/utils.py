@@ -58,3 +58,11 @@ def compile_filter(search_filter):
 
 def tolist(itm):
     return itm if isinstance(itm, SEQUENCE_TYPES) else [itm]
+
+
+def fmt_class_name(object_classes):
+    """Returns a string representation of ``object_classes`` which can be
+    used as a class name."""
+    if isinstance(object_classes, SEQUENCE_TYPES):
+        object_classes = '_'.join(object_classes)
+    return object_classes[0].upper() + object_classes[1:]

@@ -22,7 +22,7 @@ ORM Modelling
 Automatic ORM Model Creation
 ============================
 
-.. autoclass:: EntryType
+.. autofunction:: EntryType
 
 .. _entry-orm_filter:
 
