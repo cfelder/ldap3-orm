@@ -73,6 +73,28 @@ or for searching the directory simply using Python operators:
    Out[4]: [DN: uid=guest,ou=People,dc=example,dc=com - STATUS: Read - READ
             TIME: 2018-03-15T14:32:00.369434]
 
+Classes as well as instances derived from :py:class:`~ldap3_orm.entry.EntryBase`
+provide self-descriptive representations:
+
+.. code-block:: ipython
+
+   In [5]: User
+   Out[5]:
+   OBJ : inetOrgPerson, top, inetUser
+   DN  : uid={uid},{base_dn}
+   MUST: email (mail), fullname (cn), givenname (givenName), password (userPassword), surname (sn), username (uid)
+   MAY :
+
+   In [6]: u
+   Out[6]:
+   DN: uid=guest,ou=People,dc=example,dc=com - STATUS: Writable - READ TIME: <never>
+       cn: Guest User
+       givenName: Guest
+       mail: guest.user@example.com
+       sn: User
+       uid: guest
+       userPassword: {SSHA}oKJYPtoC+8mPBn/f47cSK5xWJuap183E
+
 The same code can be used in `Jupyter <http://jupyter.org>`_ when using the
 integrated :ref:`ldap3-ipython kernel <ipython_jupyter_kernel>` which provides
 the same functionality as the ldap3-orm shell mentioned above.

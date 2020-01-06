@@ -1,5 +1,7 @@
 # coding: utf-8
 
+import textwrap
+
 from ldap3 import Attribute
 from ldap3 import Entry as _Entry
 from ldap3.abstract import STATUS_WRITABLE as _STATUS_WRITEABLE
@@ -100,6 +102,30 @@ class EntryMeta(type):
                 attrs.update(set(base.__dict__.keys()))
         attrs.update(cls._attrdefs.keys())
         return list(attrs)
+
+    def __repr__(cls):
+        mandatory = []
+        optional = []
+        for kwarg in sorted(cls._attrdefs):
+            attr = cls._attrdefs[kwarg]
+            s = "{} ({})".format(kwarg, attr.name) if kwarg != attr.name else \
+                kwarg
+            if attr.mandatory:
+                mandatory.append(s)
+            else:
+                optional.append(s)
+        return textwrap.dedent("""\
+        OBJ : {obj}
+        DN  : {dn}
+        MUST: {mandatory}
+        MAY : {optional}
+        """).format(
+            obj=", ".join(cls.object_classes) if cls.object_classes else
+            "<None>",
+            dn=cls.dn,
+            mandatory=", ".join(mandatory),
+            optional=", ".join(optional),
+        )
 
 
 @add_metaclass(EntryMeta)
@@ -359,6 +385,13 @@ def EntryType(dn, object_classes, schema=None, *args, **kwargs):
 
         >>> u = InetUser(uid="guest",
                          userPassword="{SSHA}oKJYPtoC+8mPBn/f47cSK5xWJuap183E")
+
+        >>> InetUser
+        OBJ : inetUser
+        DN  : uid={uid},ou=People,dc=example,dc=com
+        MUST:
+        MAY : inetUserHttpURL, inetUserStatus, memberOf, uid, userPassword
+
         >>> u
         DN: uid=guest,ou=People,dc=example,dc=com
             objectClass: inetUser
