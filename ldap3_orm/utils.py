@@ -65,4 +65,4 @@ def fmt_class_name(object_classes):
     used as a class name."""
     if isinstance(object_classes, SEQUENCE_TYPES):
         object_classes = '_'.join(object_classes)
-    return object_classes[0].upper() + object_classes[1:]
+    return object_classes.capitalize()
