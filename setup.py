@@ -199,8 +199,7 @@ setup(cmdclass={
           "Development Status :: 3 - Alpha",
           "Intended Audience :: Developers",
           "Intended Audience :: System Administrators",
-          "License :: OSI Approved :: GNU General Public License v3 or later "
-          "(GPLv3+)",
+          "License :: OSI Approved :: GNU Lesser General Public License v3 or later (LGPLv3+)",
           "Natural Language :: English",
           "Operating System :: OS Independent",
           "Programming Language :: Python",
