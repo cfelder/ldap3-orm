@@ -286,7 +286,8 @@ class EntryBase(_Entry):
         # self._state will be overwritten by _Entry.__init__
         # thus store a copy self._state
         state = self._state
-        fmtdict = dict((k, getattr(self.__class__, k))
+        fmtdict = dict((k, getattr(self.__class__, k)) if not isinstance(
+            getattr(self.__class__, k), property) else (k, getattr(self, k))
                        for k in dir(self.__class__))
         fmtdict.update(self._state.attributes)
         fmtdict.update(self._state.parameters)
