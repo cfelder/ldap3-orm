@@ -346,6 +346,12 @@ class EntryBase(_Entry):
         else:
             return attr
 
+    def __setattr__(self, name, value):
+        if "_state" in self.__dict__ and (name in self._state.attributes or
+                                          self._state.parameters):
+            return _Entry.__setattr__(self, name, value)
+        return object.__setattr__(self, name, value)
+
 
 def EntryType(dn, object_classes, schema=None, *args, **kwargs):
     """Factory for creating ORM models from given object classes.
