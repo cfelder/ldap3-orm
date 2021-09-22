@@ -347,8 +347,7 @@ class EntryBase(_Entry):
             return attr
 
     def __setattr__(self, name, value):
-        if "_state" in self.__dict__ and (name in self._state.attributes or
-                                          self._state.parameters):
+        if "_state" in self.__dict__ and name in self._state.attributes:
             return _Entry.__setattr__(self, name, value)
         return object.__setattr__(self, name, value)
 
