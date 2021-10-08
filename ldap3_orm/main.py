@@ -145,6 +145,8 @@ def parse_args(argv):
         # generate kwargs from configuration file
         # for arguments known by the parser
         for k, v in iteritems(cfg):
+            if k == "url" and hasattr(v, "host"):
+                continue
             kwarg = "--" + k
             if kwarg in parser._option_string_actions:
                 argv.append(kwarg)
@@ -157,6 +159,8 @@ def parse_args(argv):
     # parse arguments passed to function and from configuration file
     ns = parser.parse_args(argv[1:])
     fullcfg = dict(ns.__dict__)
+    if cfg["url"] is not None and fullcfg["url"] is None:
+        del fullcfg["url"]
     # handle overwrite of username and password arguments
     password = None
     if ns_cli.username:
@@ -190,7 +194,7 @@ def parse_args(argv):
 
 def main(argv):
     ns_args = parse_args(argv)
-    if ns_args.url:
+    if ns_args.url or config.url:
         username = config.connconfig.get("user")
         authentication = config.connconfig.get("authentication")
         if (username and not authentication) or authentication == SIMPLE:

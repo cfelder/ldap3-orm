@@ -1,7 +1,9 @@
 # coding: utf-8
 
 from os import getenv, path
+import ssl
 
+from ldap3 import Server, Tls
 try:
     import keyring
 except ImportError:
@@ -187,7 +189,8 @@ class config(object):
             cls._passwordcls_or_module = cls.connconfig["password"]
             cls.connconfig[
                 "password"] = cls._passwordcls_or_module.get_password(
-                cls.url, cls.connconfig["user"]
+                cls.url.host if isinstance(cls.url, Server) else cls.url,
+                cls.connconfig["user"]
             )
             if cls.password:  # update cls.password as well
                 cls.password = cls.connconfig["password"]
@@ -211,4 +214,7 @@ class config(object):
 def read_config(path=CONFIGFILE, cls=FallbackFileType('r')):
     return execute(path, cls=cls, globals=dict(
         keyring = keyring,
+        ssl = ssl,
+        Server = Server,
+        Tls = Tls,
     ))
