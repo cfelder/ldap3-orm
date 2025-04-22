@@ -15,7 +15,7 @@ from ldap3_orm._version import __version__, __revision__
 
 
 __author__ = "Christian Felder <webmaster@bsm-felder.de>"
-__copyright__ = """Copyright 2016-2021, Christian Felder
+__copyright__ = """Copyright 2016-2025, Christian Felder
 
 This file is part of ldap3-orm, object-relational mapping for ldap3.
 
