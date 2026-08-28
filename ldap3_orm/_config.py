@@ -69,7 +69,7 @@ class FallbackFileType(object):
             # argument is just a filename (no directory components)
             if path.basename(path_or_filename) == path_or_filename:
                 return open(path.join(self._fallback, path_or_filename),
-                            **self._kwargs)
+                            self._mode, **self._kwargs)
             raise
 
 
